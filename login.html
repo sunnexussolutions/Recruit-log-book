@@ -526,11 +526,11 @@
       <div class="form-panel active" id="panelLogin">
         <div class="input-group">
           <i class="bi bi-person-badge input-icon"></i>
-          <input type="text" id="loginEmail" placeholder="Recruit ID or Registered Email" autocomplete="username" />
+          <input type="text" id="loginEmail" placeholder="Recruit ID or Registered Email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         </div>
         <div class="input-group">
           <i class="bi bi-lock input-icon"></i>
-          <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" />
+          <input type="password" id="loginPassword" placeholder="Password" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
           <button class="toggle-pw" onclick="togglePw('loginPassword', this)" tabindex="-1">
             <i class="bi bi-eye"></i>
           </button>
@@ -747,23 +747,6 @@
       setTimeout(() => {
         window.location.href = isAdmin ? 'admin-dashboard.html' : 'member-dashboard.html';
       }, 1200);
-    }
-
-    function quickFill(type) {
-      const users = getUsers();
-      if (type === 'admin') {
-        const adminUser = users.find(u => u.email.toLowerCase().includes('admin') || (u.role && u.role.toLowerCase().includes('admin')));
-        document.getElementById('loginEmail').value = (adminUser && adminUser.email) ? adminUser.email : 'admin@sunnexus.com';
-        document.getElementById('loginPassword').value = (adminUser && adminUser.password) ? adminUser.password : 'admin123';
-      } else {
-        const memberUser = users.find(u => !u.email.toLowerCase().includes('admin'));
-        if (memberUser) {
-          document.getElementById('loginEmail').value = memberUser.id || memberUser.email;
-          document.getElementById('loginPassword').value = memberUser.password || 'member123';
-        } else {
-          showMsg('loginMessage', 'error', 'No member registered yet. Log in as Admin to register members.');
-        }
-      }
     }
 
     // ── Sign Up ──
