@@ -23,6 +23,15 @@
       --white:        #ffffff;
     }
 
+    input:-webkit-autofill,
+    input:-webkit-autofill:hover, 
+    input:-webkit-autofill:focus, 
+    input:-webkit-autofill:active {
+      -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+      -webkit-text-fill-color: #1a1a2e !important;
+      transition: background-color 5000s ease-in-out 0s;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: linear-gradient(135deg, #eeeeff 0%, #f5f5ff 50%, #e8e8ff 100%);
@@ -445,13 +454,13 @@
   <div class="wave-bottom"></div>
 
   <!-- Brain watermark image -->
-  <img src="https://res.cloudinary.com/dseg9nty3/image/upload/v1784890597/7975077779d60f44fd5ccc4a43a38b32c8a7693eb2b3aeb58b2e475a8cf2279b_d1te0e.png" alt="Brain Watermark" class="brain-watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 850px; max-width: 90vw; opacity: 0.12; pointer-events: none; z-index: 0; mix-blend-mode: multiply; filter: drop-shadow(0 10px 30px rgba(108,99,255,0.15));" />
+  <img src="https://res.cloudinary.com/dseg9nty3/image/upload/v1784890597/7975077779d60f44fd5ccc4a43a38b32c8a7693eb2b3aeb58b2e475a8cf2279b_d1te0e.png" alt="Brain Watermark" class="brain-watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 850px; max-width: 90vw; opacity: 0.10; pointer-events: none; z-index: 0; filter: drop-shadow(0 10px 30px rgba(108,99,255,0.15));" />
 
   <!-- Top brand -->
   <div class="topbar">
     <div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 16px !important;">
-      <div style="width: 78px; height: 78px; min-width: 78px; border: 3px solid #6c63ff; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: #ffffff; box-shadow: 0 6px 20px rgba(108,99,255,0.3); flex-shrink: 0; overflow: hidden; padding: 0;">
-        <img src="https://res.cloudinary.com/dseg9nty3/image/upload/v1784890597/7975077779d60f44fd5ccc4a43a38b32c8a7693eb2b3aeb58b2e475a8cf2279b_d1te0e.png" alt="Sun Nexus Solutions Logo" style="width: 100%; height: 100%; object-fit: contain; display: block; mix-blend-mode: multiply;" />
+      <div style="width: 78px; height: 78px; min-width: 78px; border: 3px solid #6c63ff; border-radius: 20px; display: flex; align-items: center; justify-content: center; background: transparent; box-shadow: 0 6px 20px rgba(108,99,255,0.25); flex-shrink: 0; overflow: hidden; padding: 0;">
+        <img src="https://res.cloudinary.com/dseg9nty3/image/upload/v1784890597/7975077779d60f44fd5ccc4a43a38b32c8a7693eb2b3aeb58b2e475a8cf2279b_d1te0e.png" alt="Sun Nexus Solutions Logo" style="width: 100%; height: 100%; object-fit: contain; display: block;" />
       </div>
       <div class="brand-text d-flex flex-column justify-content-center">
         <div class="brand-name" style="font-size: 24px; font-weight: 900; color: #1a1a2e; letter-spacing: 1px; line-height: 1.0; white-space: nowrap;">SUN NEXUS</div>
