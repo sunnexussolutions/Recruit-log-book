@@ -430,7 +430,7 @@ app.patch('/api/users/:identifier/credentials', async (req, res) => {
 
 // 10. GEOFENCE LOCATION CONFIG API
 let geofenceConfig = {
-  enabled: true,
+  enabled: false,
   locationName: 'Sun Nexus Main Campus HQ',
   latitude: 18.5204,
   longitude: 73.8567,
@@ -444,7 +444,7 @@ app.get('/api/config/geofence', async (req, res) => {
       await db.query(`
         CREATE TABLE IF NOT EXISTS geofence_config (
           id INT PRIMARY KEY DEFAULT 1,
-          enabled BOOLEAN DEFAULT TRUE,
+          enabled BOOLEAN DEFAULT FALSE,
           location_name VARCHAR(255) DEFAULT 'Sun Nexus Main Campus HQ',
           latitude DOUBLE PRECISION DEFAULT 18.5204,
           longitude DOUBLE PRECISION DEFAULT 73.8567,

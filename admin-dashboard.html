@@ -680,8 +680,8 @@
           <div class="small text-muted mt-1">Set mandatory GPS location boundaries for recruit check-ins</div>
         </div>
         <div class="form-check form-switch fs-5">
-          <input class="form-check-input" type="checkbox" id="geofenceToggle" onchange="toggleGeofenceEnabled()" checked />
-          <label class="form-check-label small fw-bold text-muted ms-2" for="geofenceToggle" id="geofenceToggleLabel" style="font-size: 13px;">GEOFENCE ACTIVE</label>
+          <input class="form-check-input" type="checkbox" id="geofenceToggle" onchange="toggleGeofenceEnabled()" />
+          <label class="form-check-label small fw-bold text-muted ms-2" for="geofenceToggle" id="geofenceToggleLabel" style="font-size: 13px;">GEOFENCE DISABLED</label>
         </div>
       </div>
 
@@ -980,7 +980,7 @@
     // ── 🌐 GEOFENCE LOCATION CONTROL ──
     const GEOFENCE_KEY = 'rlb_geofence_v1';
     let geofenceSettings = {
-      enabled: true,
+      enabled: false,
       locationName: 'Sun Nexus Main Campus HQ',
       latitude: 18.5204,
       longitude: 73.8567,
