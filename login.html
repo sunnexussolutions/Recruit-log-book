@@ -526,11 +526,11 @@
       <div class="form-panel active" id="panelLogin">
         <div class="input-group">
           <i class="bi bi-person-badge input-icon"></i>
-          <input type="text" id="loginEmail" placeholder="Recruit ID or Registered Email" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          <input type="text" id="loginEmail" placeholder="Recruit ID or Registered Email" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" autocorrect="off" autocapitalize="off" spellcheck="false" />
         </div>
         <div class="input-group">
           <i class="bi bi-lock input-icon"></i>
-          <input type="password" id="loginPassword" placeholder="Password" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          <input type="password" id="loginPassword" placeholder="Password" autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" autocorrect="off" autocapitalize="off" spellcheck="false" />
           <button class="toggle-pw" onclick="togglePw('loginPassword', this)" tabindex="-1">
             <i class="bi bi-eye"></i>
           </button>
@@ -826,6 +826,16 @@
       if (e.key === 'Enter') {
         handleLogin();
       }
+    });
+
+    // Clear any autofilled credentials on page load
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const e = document.getElementById('loginEmail');
+        const p = document.getElementById('loginPassword');
+        if (e) e.value = '';
+        if (p) p.value = '';
+      }, 50);
     });
   </script>
 </body>
