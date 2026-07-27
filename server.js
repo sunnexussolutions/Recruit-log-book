@@ -438,20 +438,89 @@ let geofenceConfig = {
   allowFallback: false
 };
 
-app.get('/api/config/geofence', (req, res) => {
+app.get('/api/config/geofence', async (req, res) => {
+  try {
+    if (db.pool) {
+      await db.query(`
+        CREATE TABLE IF NOT EXISTS geofence_config (
+          id INT PRIMARY KEY DEFAULT 1,
+          enabled BOOLEAN DEFAULT TRUE,
+          location_name VARCHAR(255) DEFAULT 'Sun Nexus Main Campus HQ',
+          latitude DOUBLE PRECISION DEFAULT 18.5204,
+          longitude DOUBLE PRECISION DEFAULT 73.8567,
+          radius_meters INT DEFAULT 300,
+          allow_fallback BOOLEAN DEFAULT FALSE,
+          updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      const result = await db.query(`SELECT * FROM geofence_config WHERE id = 1`);
+      if (result.rows.length > 0) {
+        const row = result.rows[0];
+        geofenceConfig = {
+          enabled: row.enabled,
+          locationName: row.location_name,
+          latitude: parseFloat(row.latitude),
+          longitude: parseFloat(row.longitude),
+          radiusMeters: parseInt(row.radius_meters),
+          allowFallback: row.allow_fallback
+        };
+        return res.json({ success: true, geofence: geofenceConfig });
+      }
+    }
+  } catch (err) {
+    console.warn('Geofence DB read fallback to memory:', err);
+  }
   res.json({ success: true, geofence: geofenceConfig });
 });
 
-app.post('/api/config/geofence', (req, res) => {
-  const { enabled, locationName, latitude, longitude, radiusMeters, allowFallback } = req.body;
-  if (enabled !== undefined) geofenceConfig.enabled = Boolean(enabled);
-  if (locationName) geofenceConfig.locationName = locationName;
-  if (latitude !== undefined) geofenceConfig.latitude = parseFloat(latitude);
-  if (longitude !== undefined) geofenceConfig.longitude = parseFloat(longitude);
-  if (radiusMeters !== undefined) geofenceConfig.radiusMeters = parseInt(radiusMeters);
-  if (allowFallback !== undefined) geofenceConfig.allowFallback = Boolean(allowFallback);
+app.post('/api/config/geofence', async (req, res) => {
+  try {
+    const { enabled, locationName, latitude, longitude, radiusMeters, allowFallback } = req.body;
+    if (enabled !== undefined) geofenceConfig.enabled = Boolean(enabled);
+    if (locationName) geofenceConfig.locationName = locationName;
+    if (latitude !== undefined) geofenceConfig.latitude = parseFloat(latitude);
+    if (longitude !== undefined) geofenceConfig.longitude = parseFloat(longitude);
+    if (radiusMeters !== undefined) geofenceConfig.radiusMeters = parseInt(radiusMeters);
+    if (allowFallback !== undefined) geofenceConfig.allowFallback = Boolean(allowFallback);
 
-  res.json({ success: true, geofence: geofenceConfig });
+    if (db.pool) {
+      await db.query(`
+        CREATE TABLE IF NOT EXISTS geofence_config (
+          id INT PRIMARY KEY DEFAULT 1,
+          enabled BOOLEAN DEFAULT TRUE,
+          location_name VARCHAR(255) DEFAULT 'Sun Nexus Main Campus HQ',
+          latitude DOUBLE PRECISION DEFAULT 18.5204,
+          longitude DOUBLE PRECISION DEFAULT 73.8567,
+          radius_meters INT DEFAULT 300,
+          allow_fallback BOOLEAN DEFAULT FALSE,
+          updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+        )
+      `);
+      await db.query(`
+        INSERT INTO geofence_config (id, enabled, location_name, latitude, longitude, radius_meters, allow_fallback, updated_at)
+        VALUES (1, $1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)
+        ON CONFLICT (id) DO UPDATE SET
+          enabled = EXCLUDED.enabled,
+          location_name = EXCLUDED.location_name,
+          latitude = EXCLUDED.latitude,
+          longitude = EXCLUDED.longitude,
+          radius_meters = EXCLUDED.radius_meters,
+          allow_fallback = EXCLUDED.allow_fallback,
+          updated_at = CURRENT_TIMESTAMP
+      `, [
+        geofenceConfig.enabled,
+        geofenceConfig.locationName,
+        geofenceConfig.latitude,
+        geofenceConfig.longitude,
+        geofenceConfig.radiusMeters,
+        geofenceConfig.allowFallback
+      ]);
+    }
+    return res.json({ success: true, geofence: geofenceConfig });
+  } catch (err) {
+    console.error('Geofence DB update error:', err);
+    res.json({ success: true, geofence: geofenceConfig });
+  }
 });
 
 // Export Express App for Vercel Serverless Functions

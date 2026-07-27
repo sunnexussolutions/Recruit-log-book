@@ -1173,7 +1173,8 @@
 
     async function fetchGeofenceConfig() {
       try {
-        const res = await fetch('/api/config/geofence');
+        const geoUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/config/geofence') : 'https://recruit-log-book.vercel.app/api/config/geofence';
+        const res = await fetch(geoUrl);
         if (res.ok) {
           const data = await res.json();
           if (data.geofence) {

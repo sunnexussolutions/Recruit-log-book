@@ -991,7 +991,8 @@
     async function loadGeofenceSettings() {
       // 1. Try Neon API first
       try {
-        const res = await fetch('/api/config/geofence');
+        const geoUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/config/geofence') : 'https://recruit-log-book.vercel.app/api/config/geofence';
+        const res = await fetch(geoUrl);
         if (res.ok) {
           const data = await res.json();
           if (data.geofence) {
@@ -1033,7 +1034,8 @@
       localStorage.setItem(GEOFENCE_KEY, JSON.stringify(geofenceSettings));
 
       try {
-        await fetch('/api/config/geofence', {
+        const geoUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/config/geofence') : 'https://recruit-log-book.vercel.app/api/config/geofence';
+        await fetch(geoUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(geofenceSettings)
@@ -1051,7 +1053,8 @@
       localStorage.setItem(GEOFENCE_KEY, JSON.stringify(geofenceSettings));
 
       try {
-        fetch('/api/config/geofence', {
+        const geoUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/config/geofence') : 'https://recruit-log-book.vercel.app/api/config/geofence';
+        fetch(geoUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ enabled: isChecked })
