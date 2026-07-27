@@ -55,9 +55,9 @@ $densities = @(
 foreach ($d in $densities) {
     $dirPath = Join-Path $resDir $d.Name
     if (Test-Path $dirPath) {
-        # Legacy launcher icon (white background, padded logo)
-        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $false
-        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_round.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $false
+        # Legacy launcher icon (transparent background, padded logo)
+        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $true
+        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_round.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $true
         
         # Adaptive foreground (transparent background, safe-zone padded logo)
         New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_foreground.png") -canvasWidth $d.Fg -canvasHeight $d.Fg -logoWidth $d.FgLogo -logoHeight $d.FgLogo -isTransparent $true
