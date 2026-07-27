@@ -8,7 +8,7 @@ if (-not (Test-Path $srcPath)) {
 
 $srcImg = [System.Drawing.Image]::FromFile($srcPath)
 
-function Create-PaddedIcon {
+function New-PaddedIcon {
     param(
         [string]$outputPath,
         [int]$canvasWidth,
@@ -45,22 +45,22 @@ $resDir = "D:\XboxGames\Recruit log book\android\app\src\main\res"
 
 # Densities and dimensions for Android launcher icons & adaptive foregrounds
 $densities = @(
-    @{ Name="mipmap-mdpi";    Legacy=48;  LegacyLogo=38;  Fg=108; FgLogo=66  },
-    @{ Name="mipmap-hdpi";    Legacy=72;  LegacyLogo=58;  Fg=162; FgLogo=100 },
-    @{ Name="mipmap-xhdpi";   Legacy=96;  LegacyLogo=78;  Fg=216; FgLogo=134 },
-    @{ Name="mipmap-xxhdpi";  Legacy=144; LegacyLogo=116; Fg=432; FgLogo=264 },
-    @{ Name="mipmap-xxxhdpi"; Legacy=192; LegacyLogo=154; Fg=576; FgLogo=352 }
+    @{ Name="mipmap-mdpi";    Legacy=48;  LegacyLogo=44;  Fg=108; FgLogo=88  },
+    @{ Name="mipmap-hdpi";    Legacy=72;  LegacyLogo=66;  Fg=162; FgLogo=132 },
+    @{ Name="mipmap-xhdpi";   Legacy=96;  LegacyLogo=88;  Fg=216; FgLogo=176 },
+    @{ Name="mipmap-xxhdpi";  Legacy=144; LegacyLogo=132; Fg=432; FgLogo=354 },
+    @{ Name="mipmap-xxxhdpi"; Legacy=192; LegacyLogo=176; Fg=576; FgLogo=472 }
 )
 
 foreach ($d in $densities) {
     $dirPath = Join-Path $resDir $d.Name
     if (Test-Path $dirPath) {
         # Legacy launcher icon (white background, padded logo)
-        Create-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $false
-        Create-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_round.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $false
+        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $false
+        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_round.png") -canvasWidth $d.Legacy -canvasHeight $d.Legacy -logoWidth $d.LegacyLogo -logoHeight $d.LegacyLogo -isTransparent $false
         
         # Adaptive foreground (transparent background, safe-zone padded logo)
-        Create-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_foreground.png") -canvasWidth $d.Fg -canvasHeight $d.Fg -logoWidth $d.FgLogo -logoHeight $d.FgLogo -isTransparent $true
+        New-PaddedIcon -outputPath (Join-Path $dirPath "ic_launcher_foreground.png") -canvasWidth $d.Fg -canvasHeight $d.Fg -logoWidth $d.FgLogo -logoHeight $d.FgLogo -isTransparent $true
         
         Write-Host "Processed $($d.Name)"
     }
