@@ -7,6 +7,7 @@
 
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <script src="assets/js/api-config.js"></script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -665,7 +666,8 @@
 
       // ── 🐘 Try Neon Database API first ──
       try {
-        const res = await fetch('/api/auth/login', {
+        const targetUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/auth/login') : 'https://recruit-log-book.vercel.app/api/auth/login';
+        const res = await fetch(targetUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ identifier: email, password })
@@ -768,7 +770,8 @@
       // ── 🐘 Register via Neon API ──
       try {
         const autoRegId = 'REC-' + Date.now().toString().slice(-5);
-        const res = await fetch('/api/users/register', {
+        const registerUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/users/register') : 'https://recruit-log-book.vercel.app/api/users/register';
+        const res = await fetch(registerUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

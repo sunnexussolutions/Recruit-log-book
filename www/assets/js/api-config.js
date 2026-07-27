@@ -17,10 +17,10 @@
   } else if (window.location.port === '3000') {
     defaultBase = 'http://localhost:3000';
   } else if (window.Capacitor || window.location.protocol === 'capacitor:' || window.location.protocol === 'file:') {
-    // Native mobile app: use stored URL, or local IP, or cloud production URL
-    defaultBase = storedUrl || 'http://10.0.2.2:3000';
+    // Native mobile app: use stored URL or live Vercel cloud production URL
+    defaultBase = storedUrl || 'https://recruit-log-book.vercel.app';
   } else {
-    defaultBase = 'http://localhost:3000';
+    defaultBase = storedUrl || 'https://recruit-log-book.vercel.app';
   }
 
   window.API_BASE_URL = storedUrl || defaultBase;
