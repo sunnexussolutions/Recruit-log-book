@@ -475,12 +475,6 @@
         <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="refreshAdminData()">
           <i class="bi bi-arrow-clockwise me-1"></i> Live Refresh
         </button>
-        <button class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" onclick="clearDemoData()">
-          <i class="bi bi-trash3 me-1"></i> Clear Demo Data
-        </button>
-        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold" onclick="seedSampleData()">
-          <i class="bi bi-database-add me-1"></i> Load Demo Data
-        </button>
       </div>
     </div>
 
@@ -1415,40 +1409,6 @@
         `;
         tbody.appendChild(tr);
       });
-    }
-
-    // ── CLEAR DEMO DATA & DEMO SEEDING ──
-    function clearDemoData() {
-      if (confirm('🧹 Clear all demo attendance records, work protocols, and test recruits?')) {
-        globalLogs = { attendance: [], workReports: [], weeklyUpdates: [] };
-        localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
-
-        usersData = [
-          { id: 'ADM-001', name: 'Executive Admin', email: 'admin@sunnexus.com', role: 'Lead Operations Admin', password: 'admin123', joinedAt: new Date().toISOString() }
-        ];
-        localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
-
-        refreshAdminUI();
-        showToast('🧹 Demo data cleared successfully!');
-      }
-    }
-
-    function seedSampleData() {
-      globalLogs = {
-        attendance: [
-          { name: 'Alex Vance', email: 'alex@sunnexus.com', status: 'CHECKED_IN', checkIn: '08:55 AM', checkOut: '--:--', hours: 'Active' },
-          { name: 'Sarah Chen', email: 'sarah@sunnexus.com', status: 'CHECKED_OUT', checkIn: '09:00 AM', checkOut: '05:30 PM', hours: '8h 30m' }
-        ],
-        workReports: [
-          { name: 'Alex Vance', email: 'alex@sunnexus.com', date: new Date().toISOString().slice(0, 10) + ' 09:15', title: 'API Telemetry & Auth Sync', details: 'Integrated central localStorage state syncing between Member Console and Admin Command Center.' },
-          { name: 'Sarah Chen', email: 'sarah@sunnexus.com', date: new Date().toISOString().slice(0, 10) + ' 17:30', title: 'UI Glassmorphism Theme Refactor', details: 'Synced color CSS tokens (#111827 background & cyan/purple highlights) across admin layout.' }
-        ],
-        weeklyUpdates: []
-      };
-
-      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
-      refreshAdminUI();
-      showToast('🚀 Demo telemetry & work protocol logs seeded successfully!');
     }
 
     async function removeRecruit(index) {
