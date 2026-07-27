@@ -989,6 +989,7 @@
     };
 
     async function loadGeofenceSettings() {
+      let fetchedFromApi = false;
       // 1. Try Neon API first
       try {
         const geoUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/config/geofence') : 'https://recruit-log-book.vercel.app/api/config/geofence';
@@ -998,16 +999,19 @@
           if (data.geofence) {
             geofenceSettings = data.geofence;
             localStorage.setItem(GEOFENCE_KEY, JSON.stringify(geofenceSettings));
+            fetchedFromApi = true;
           }
         }
       } catch (err) {
         console.warn('⚠️ Neon Geofence API offline — fallback to LocalStorage:', err);
       }
 
-      // 2. Fallback to LocalStorage
-      const localGeo = localStorage.getItem(GEOFENCE_KEY);
-      if (localGeo) {
-        try { geofenceSettings = Object.assign({}, geofenceSettings, JSON.parse(localGeo)); } catch(e){}
+      // 2. Fallback to LocalStorage ONLY if API fetch failed
+      if (!fetchedFromApi) {
+        const localGeo = localStorage.getItem(GEOFENCE_KEY);
+        if (localGeo) {
+          try { geofenceSettings = Object.assign({}, geofenceSettings, JSON.parse(localGeo)); } catch(e){}
+        }
       }
 
       // 3. Update Admin UI inputs
@@ -1057,7 +1061,7 @@
         fetch(geoUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ enabled: isChecked })
+          body: JSON.stringify(geofenceSettings)
         });
       } catch(e) {}
 
