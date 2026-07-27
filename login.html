@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login — Recruit Logbook</title>
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple:       #6c63ff;
+      --purple-dark:  #5a52d5;
+      --purple-light: rgba(108, 99, 255, 0.1);
+      --purple-bg:    #f0f0ff;
+      --text-dark:    #1a1a2e;
+      --text-mid:     #4a4a6a;
+      --text-muted:   #8888aa;
+      --border:       #e0e0f0;
+      --white:        #ffffff;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #eeeeff 0%, #f5f5ff 50%, #e8e8ff 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Ambient background shapes ── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { width: 500px; height: 500px; background: rgba(108,99,255,0.08); top: -100px; left: -100px; }
+    .blob-2 { width: 400px; height: 400px; background: rgba(108,99,255,0.06); bottom: -80px; right: 300px; }
+    .blob-3 { width: 300px; height: 300px; background: rgba(255,200,100,0.07); top: 30%; left: 20%; }
+
+    /* ── Floating background brain SVG ── */
+    .brain-bg {
+      position: fixed;
+      top: 50%;
+      left: 28%;
+      transform: translate(-50%, -50%);
+      width: 420px;
+      opacity: 0.06;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Wave bottom ── */
+    .wave-bottom {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 160px;
+      background: linear-gradient(135deg, rgba(108,99,255,0.12), rgba(108,99,255,0.05));
+      clip-path: ellipse(60% 100% at 30% 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Top brand bar ── */
+    .topbar {
+      position: relative;
+      z-index: 10;
+      padding: 24px 48px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6c63ff, #a78bfa);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      box-shadow: 0 4px 14px rgba(108,99,255,0.35);
+    }
+
+    .brand-text { line-height: 1.1; }
+    .brand-name { font-size: 14px; font-weight: 900; color: var(--text-dark); letter-spacing: 0.5px; }
+    .brand-sub  { font-size: 11px; font-weight: 700; color: var(--purple); letter-spacing: 1px; text-transform: uppercase; }
+
+    /* ── Main layout ── */
+    .main-layout {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 480px;
+      gap: 0;
+      align-items: center;
+      padding: 0 48px 48px;
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      padding-right: 48px;
+    }
+
+    .hero-heading {
+      font-size: 64px;
+      font-weight: 900;
+      line-height: 1.05;
+      color: var(--text-dark);
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+
+    .hero-heading .accent { color: var(--purple); }
+
+    .hero-divider {
+      width: 48px;
+      height: 4px;
+      background: var(--purple);
+      border-radius: 2px;
+      margin-bottom: 20px;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: var(--text-mid);
+      line-height: 1.7;
+      max-width: 380px;
+      margin-bottom: 36px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      max-width: 420px;
+    }
+
+    .feature-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(108, 99, 255, 0.15);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: default;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(108,99,255,0.12);
+      border-color: rgba(108, 99, 255, 0.3);
+    }
+
+    .feature-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .fi-purple { background: rgba(108,99,255,0.12); color: #6c63ff; }
+    .fi-blue   { background: rgba(59,130,246,0.12); color: #3b82f6; }
+    .fi-orange { background: rgba(249,115,22,0.12); color: #f97316; }
+    .fi-green  { background: rgba(34,197,94,0.12);  color: #22c55e; }
+
+    .feature-text .f-title { font-size: 13.5px; font-weight: 700; color: var(--text-dark); }
+    .feature-text .f-desc  { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+    /* ── RIGHT PANEL — Login Card ── */
+    .login-card {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 44px 40px;
+      box-shadow: 0 20px 60px rgba(108,99,255,0.12), 0 4px 16px rgba(0,0,0,0.06);
+    }
+
+    .card-icon-wrap {
+      width: 56px;
+      height: 56px;
+      background: var(--purple-light);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .card-icon-wrap i { font-size: 24px; color: var(--purple); }
+
+    .card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-dark);
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .card-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    /* Tab switcher */
+    .tab-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: #f5f5ff;
+      border-radius: 12px;
+      padding: 4px;
+      margin-bottom: 24px;
+    }
+
+    .tab-btn {
+      padding: 10px;
+      border: none;
+      border-radius: 9px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--text-muted);
+    }
+
+    .tab-btn.active {
+      background: white;
+      color: var(--purple);
+      box-shadow: 0 2px 8px rgba(108,99,255,0.15);
+    }
+
+    /* Forms */
+    .form-panel { display: none; }
+    .form-panel.active { display: block; }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 16px;
+    }
+
+    .input-group i.input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+      pointer-events: none;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: var(--text-dark);
+      background: #fafafa;
+      transition: all 0.2s;
+      outline: none;
+    }
+
+    .input-group input:focus {
+      border-color: var(--purple);
+      background: white;
+      box-shadow: 0 0 0 4px rgba(108,99,255,0.1);
+    }
+
+    .input-group input::placeholder { color: var(--text-muted); }
+
+    .toggle-pw {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 16px;
+      padding: 0;
+      transition: color 0.2s;
+    }
+
+    .toggle-pw:hover { color: var(--purple); }
+
+    .forgot-link {
+      text-align: right;
+      margin-bottom: 20px;
+    }
+
+    .forgot-link a {
+      font-size: 13px;
+      color: var(--purple);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .forgot-link a:hover { text-decoration: underline; }
+
+    .btn-login {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #6c63ff, #8b82ff);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 20px rgba(108,99,255,0.35);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-login:hover {
+      background: linear-gradient(135deg, #5a52d5, #7c73ff);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(108,99,255,0.45);
+    }
+
+    .btn-login:active { transform: translateY(0); }
+
+    .btn-login.loading { opacity: 0.8; pointer-events: none; }
+
+    .or-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 18px 0;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .btn-google {
+      width: 100%;
+      padding: 13px;
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: var(--text-dark);
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .btn-google:hover {
+      border-color: #dadaff;
+      background: #fafaff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    .google-icon {
+      width: 20px;
+      height: 20px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath fill='%23EA4335' d='M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z'/%3E%3Cpath fill='%234285F4' d='M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z'/%3E%3Cpath fill='%23FBBC05' d='M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z'/%3E%3Cpath fill='%2334A853' d='M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z'/%3E%3C/svg%3E") center/contain no-repeat;
+      flex-shrink: 0;
+    }
+
+    /* Error / success messages */
+    .form-message {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      display: none;
+    }
+
+    .form-message.error   { background: #fff0f0; color: #c0392b; border: 1px solid #fdc0c0; display: flex; gap: 8px; align-items: center; }
+    .form-message.success { background: #f0fff8; color: #1e8449; border: 1px solid #a9dfbf; display: flex; gap: 8px; align-items: center; }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      body { overflow-y: auto; overflow-x: hidden; }
+      .topbar { padding: 18px 24px; }
+      .main-layout { grid-template-columns: 1fr; padding: 0 20px 40px; justify-items: center; }
+      .left-panel { display: none; }
+      .login-card { max-width: 440px; width: 100%; padding: 32px 24px; border-radius: 20px; }
+      .brain-watermark { width: 550px !important; max-width: 95vw !important; left: 50% !important; top: 50% !important; opacity: 0.07 !important; }
+    }
+
+    @media (max-width: 480px) {
+      .topbar { padding: 14px 16px; }
+      .brand-name { font-size: 14px; }
+      .brand-sub { font-size: 10px; }
+      .login-card { padding: 26px 18px; border-radius: 18px; }
+      .card-title { font-size: 20px; }
+      .card-sub { font-size: 12.5px; }
+      .btn-login { padding: 13px; font-size: 14px; }
+      .brain-watermark { width: 420px !important; max-width: 98vw !important; left: 50% !important; top: 50% !important; opacity: 0.06 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+  <div class="wave-bottom"></div>
+
+  <!-- Brain watermark image -->
+  <img src="assets/sun-nexus-logo.png" alt="Brain Watermark" class="brain-watermark" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 850px; max-width: 90vw; opacity: 0.09; pointer-events: none; z-index: 0; filter: drop-shadow(0 10px 30px rgba(108,99,255,0.15));" />
+
+  <!-- Top brand -->
+  <div class="topbar">
+    <div style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 16px !important;">
+      <div style="width: 72px; height: 72px; min-width: 72px; border: 2.5px solid #6c63ff; border-radius: 16px; display: flex; align-items: center; justify-content: center; background: #ffffff; box-shadow: 0 6px 18px rgba(108,99,255,0.25); flex-shrink: 0; overflow: hidden; position: relative;">
+        <img src="assets/sun-nexus-logo.png" alt="Sun Nexus Solutions Logo" style="width: 220%; height: 220%; max-width: none; max-height: none; object-fit: contain; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+      </div>
+      <div class="brand-text d-flex flex-column justify-content-center">
+        <div class="brand-name" style="font-size: 24px; font-weight: 900; color: #1a1a2e; letter-spacing: 1px; line-height: 1.0; white-space: nowrap;">SUN NEXUS</div>
+        <div class="brand-sub" style="font-size: 14px; font-weight: 800; color: #6c63ff; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; white-space: nowrap;">SOLUTIONS</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <div class="main-layout">
+
+    <!-- LEFT — Hero -->
+    <div class="left-panel">
+      <h1 class="hero-heading">
+        Think.<br>
+        <span class="accent">Innovate.</span><br>
+        Master.
+      </h1>
+      <div class="hero-divider"></div>
+      <p class="hero-desc">The definitive ecosystem for future-ready engineers. Elevate your operational potential with the Recruit Logbook platform.</p>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon fi-purple"><i class="bi bi-activity"></i></div>
+          <div class="feature-text">
+            <div class="f-title">Attendance Hub</div>
+            <div class="f-desc">Real-time check-in telemetry</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-blue"><i class="bi bi-journal-richtext"></i></div>
+          <div class="feature-text">
+            <div class="f-title">Work Protocol</div>
+            <div class="f-desc">Daily log commitment system</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-orange"><i class="bi bi-people"></i></div>
+          <div class="feature-text">
+            <div class="f-title">Elite Network</div>
+            <div class="f-desc">Collaborative member hub</div>
+          </div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon fi-green"><i class="bi bi-shield-check"></i></div>
+          <div class="feature-text">
+            <div class="f-title">Skills Tracker</div>
+            <div class="f-desc">Weekly progress reporting</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT — Login Card -->
+    <div class="login-card">
+      <div class="card-icon-wrap">
+        <i class="bi bi-shield-lock-fill"></i>
+      </div>
+      <div class="card-title">System Portal Login</div>
+      <div class="card-sub">Enter your Recruit ID or Email to access your console.</div>
+
+      <!-- UNIFIED LOGIN FORM -->
+      <div class="form-panel active" id="panelLogin">
+        <div class="input-group">
+          <i class="bi bi-person-badge input-icon"></i>
+          <input type="text" id="loginEmail" placeholder="Recruit ID or Registered Email" autocomplete="username" />
+        </div>
+        <div class="input-group">
+          <i class="bi bi-lock input-icon"></i>
+          <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" />
+          <button class="toggle-pw" onclick="togglePw('loginPassword', this)" tabindex="-1">
+            <i class="bi bi-eye"></i>
+          </button>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3" style="font-size:13px;">
+          <div class="d-flex gap-2 align-items-center">
+            <span class="text-muted">Fill:</span>
+            <a href="#" onclick="quickFill('member')" class="fw-bold" style="color:var(--purple); text-decoration:none;">Member</a>
+            <span class="text-muted">|</span>
+            <a href="#" onclick="quickFill('admin')" class="fw-bold" style="color:var(--purple); text-decoration:none;">Admin</a>
+          </div>
+          <div class="forgot-link m-0"><a href="#">Forgot Password?</a></div>
+        </div>
+        <button class="btn-login" id="loginBtn" onclick="handleLogin()">
+          Sign In <i class="bi bi-arrow-right"></i>
+        </button>
+        <div class="form-message" id="loginMessage"></div>
+        <div class="text-center" style="font-size: 12.5px; border-top: 1px solid var(--border); margin-top: 32px; padding-top: 24px;">
+          <div style="background: rgba(108, 99, 255, 0.08); border: 1px solid rgba(108, 99, 255, 0.25); color: var(--purple); border-radius: 12px; padding: 14px 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-weight: 600; line-height: 1.4; max-width: 100%;">
+            <i class="bi bi-shield-lock-fill" style="font-size: 16px;"></i>
+            <span>New members are registered by the System Admin. Contact your lead to obtain credentials.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ── User DB stored in localStorage ──
+    const USERS_KEY   = 'rlb_users_v1';
+    const SESSION_KEY = 'rlb_session_v1';
+
+    function getUsers() {
+      try {
+        let users = JSON.parse(localStorage.getItem(USERS_KEY));
+        if (!users || users.length === 0) {
+          users = [
+            {
+              id: 'REC-100',
+              name: 'Executive Admin',
+              prn: '20240000000',
+              year: 'Faculty Lead',
+              domain: 'Operations Command',
+              mobile: '+91 9999999999',
+              email: 'admin@sunnexus.com',
+              role: 'Lead Operations Admin',
+              password: 'admin123',
+              joinedAt: new Date().toISOString()
+            },
+            {
+              id: 'REC-101',
+              name: 'Recruit Member',
+              prn: '20240110492',
+              year: '2nd Year',
+              domain: 'Full Stack Web Dev',
+              mobile: '+91 9876543210',
+              email: 'member@sunnexus.com',
+              role: 'Software Engineer',
+              password: 'member123',
+              joinedAt: new Date().toISOString()
+            }
+          ];
+          localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
+        return users;
+      } catch {
+        return [];
+      }
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    }
+
+    // If already logged in, redirect immediately
+    (function checkSession() {
+      const session = localStorage.getItem(SESSION_KEY);
+      if (session) {
+        window.location.href = 'member-dashboard.html';
+      }
+    })();
+
+    // ── Tab Switcher ──
+    function switchTab(tab) {
+      document.getElementById('panelLogin').classList.remove('active');
+      document.getElementById('panelSignup').classList.remove('active');
+      document.getElementById('tabLogin').classList.remove('active');
+      document.getElementById('tabSignup').classList.remove('active');
+
+      document.getElementById('panel' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+      document.getElementById('tab'   + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+
+      clearMessages();
+    }
+
+    function clearMessages() {
+      ['loginMessage', 'signupMessage'].forEach(id => {
+        const el = document.getElementById(id);
+        el.className = 'form-message';
+        el.style.display = 'none';
+        el.innerText = '';
+      });
+    }
+
+    function showMsg(id, type, msg) {
+      const el = document.getElementById(id);
+      el.className = 'form-message ' + type;
+      el.innerHTML = `<i class="bi bi-${type === 'error' ? 'exclamation-circle' : 'check-circle-fill'}"></i> ${msg}`;
+      el.style.display = 'flex';
+    }
+
+    // ── Password toggle ──
+    function togglePw(inputId, btn) {
+      const inp = document.getElementById(inputId);
+      const icon = btn.querySelector('i');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        icon.className = 'bi bi-eye-slash';
+      } else {
+        inp.type = 'password';
+        icon.className = 'bi bi-eye';
+      }
+    }
+
+    // ── Login ──
+    async function handleLogin() {
+      const email    = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+
+      if (!email || !password) {
+        showMsg('loginMessage', 'error', 'Please fill in all fields.');
+        return;
+      }
+
+      const btn = document.getElementById('loginBtn');
+      btn.classList.add('loading');
+      btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Authenticating...';
+
+      // ── 🐘 Try Neon Database API first ──
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ identifier: email, password })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          const user = data.user;
+          const isAdmin = user.isAdmin || (user.role && user.role.toLowerCase().includes('admin'));
+
+          // Store full session including DB id for API syncing
+          localStorage.setItem(SESSION_KEY, JSON.stringify({
+            id:      user.id,
+            regId:   user.regId,
+            name:    user.name,
+            email:   user.email,
+            role:    user.role || (isAdmin ? 'Executive Admin' : 'Team Member'),
+            isAdmin: isAdmin,
+            loginAt: new Date().toISOString(),
+            source:  'neon'
+          }));
+          localStorage.removeItem('recruit_logbook_state_v1');
+
+          showMsg('loginMessage', 'success', `✅ Welcome back, ${user.name}! Redirecting...`);
+          setTimeout(() => {
+            window.location.href = isAdmin ? 'admin-dashboard.html' : 'member-dashboard.html';
+          }, 1000);
+          return;
+        }
+
+        const errData = await res.json().catch(() => ({}));
+        // Fall through to localStorage fallback on 401
+        if (res.status === 401) {
+          btn.classList.remove('loading');
+          btn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Secure Login';
+          showMsg('loginMessage', 'error', errData.error || 'Access Denied: Invalid credentials.');
+          return;
+        }
+        // On server error, fall back to localStorage
+      } catch (networkErr) {
+        console.warn('⚠️ Neon API unreachable — falling back to localStorage auth:', networkErr);
+      }
+
+      // ── 📦 localStorage Fallback ──
+      const users = getUsers();
+      const inputVal = email.toLowerCase();
+      const userMatch = users.find(u =>
+        (u.email && u.email.toLowerCase() === inputVal) ||
+        (u.id   && u.id.toLowerCase()    === inputVal)
+      );
+
+      btn.classList.remove('loading');
+      btn.innerHTML = '<i class="bi bi-box-arrow-in-right"></i> Secure Login';
+
+      if (!userMatch) {
+        showMsg('loginMessage', 'error', 'Access Denied: Recruit ID or Email not found.');
+        return;
+      }
+      if (userMatch.password !== password) {
+        showMsg('loginMessage', 'error', 'Incorrect password. Please try again.');
+        return;
+      }
+
+      const isAdmin = (userMatch.role && userMatch.role.toLowerCase().includes('admin')) ||
+                       userMatch.email.toLowerCase().includes('admin');
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        name:    userMatch.name,
+        email:   userMatch.email,
+        role:    userMatch.role || (isAdmin ? 'Executive Admin' : 'Team Member'),
+        isAdmin: isAdmin,
+        loginAt: new Date().toISOString(),
+        source:  'localStorage'
+      }));
+      localStorage.removeItem('recruit_logbook_state_v1');
+
+      showMsg('loginMessage', 'success', `Welcome back, ${userMatch.name}! Redirecting...`);
+      btn.classList.add('loading');
+      btn.innerHTML = '<i class="bi bi-hourglass-split"></i> Authenticating...';
+      setTimeout(() => {
+        window.location.href = isAdmin ? 'admin-dashboard.html' : 'member-dashboard.html';
+      }, 1200);
+    }
+
+    function quickFill(type) {
+      const users = getUsers();
+      if (type === 'admin') {
+        const adminUser = users.find(u => u.email.toLowerCase().includes('admin') || (u.role && u.role.toLowerCase().includes('admin')));
+        document.getElementById('loginEmail').value = (adminUser && adminUser.email) ? adminUser.email : 'admin@sunnexus.com';
+        document.getElementById('loginPassword').value = (adminUser && adminUser.password) ? adminUser.password : 'admin123';
+      } else {
+        const memberUser = users.find(u => !u.email.toLowerCase().includes('admin'));
+        if (memberUser) {
+          document.getElementById('loginEmail').value = memberUser.id || memberUser.email;
+          document.getElementById('loginPassword').value = memberUser.password || 'member123';
+        } else {
+          showMsg('loginMessage', 'error', 'No member registered yet. Log in as Admin to register members.');
+        }
+      }
+    }
+
+    // ── Sign Up ──
+    async function handleSignup() {
+      const name     = document.getElementById('signupName').value.trim();
+      const email    = document.getElementById('signupEmail').value.trim();
+      const role     = document.getElementById('signupRole').value.trim();
+      const password = document.getElementById('signupPassword').value;
+
+      if (!name || !email || !password) {
+        showMsg('signupMessage', 'error', 'Name, email and password are required.');
+        return;
+      }
+      if (password.length < 6) {
+        showMsg('signupMessage', 'error', 'Password must be at least 6 characters.');
+        return;
+      }
+
+      // ── 🐘 Register via Neon API ──
+      try {
+        const autoRegId = 'REC-' + Date.now().toString().slice(-5);
+        const res = await fetch('/api/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            regId: autoRegId,
+            name, email,
+            role: role || 'Team Member',
+            password
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          // Also save in localStorage as fallback
+          const users = getUsers();
+          users.push({ id: autoRegId, name, email, role: role || 'Team Member', password, joinedAt: new Date().toISOString() });
+          saveUsers(users);
+
+          showMsg('signupMessage', 'success', '✅ Account registered in Neon DB! Switching to login...');
+          setTimeout(() => {
+            document.getElementById('signupName').value     = '';
+            document.getElementById('signupEmail').value    = '';
+            document.getElementById('signupRole').value     = '';
+            document.getElementById('signupPassword').value = '';
+            switchTab('login');
+            document.getElementById('loginEmail').value = email;
+          }, 1200);
+          return;
+        }
+        showMsg('signupMessage', 'error', data.error || 'Registration failed. Try again.');
+        return;
+      } catch (networkErr) {
+        console.warn('⚠️ Neon API unreachable — saving to localStorage only:', networkErr);
+      }
+
+      // ── 📦 localStorage Fallback ──
+      const users = getUsers();
+      if (users.find(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showMsg('signupMessage', 'error', 'An account with this email already exists.');
+        return;
+      }
+      users.push({ name, email, role: role || 'Team Member', password, joinedAt: new Date().toISOString() });
+      saveUsers(users);
+      showMsg('signupMessage', 'success', 'Account created locally! Switching to login...');
+      setTimeout(() => {
+        document.getElementById('signupName').value     = '';
+        document.getElementById('signupEmail').value    = '';
+        document.getElementById('signupRole').value     = '';
+        document.getElementById('signupPassword').value = '';
+        switchTab('login');
+        document.getElementById('loginEmail').value = email;
+      }, 1200);
+    }
+
+    // Enter key support
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        handleLogin();
+      }
+    });
+  </script>
+</body>
+</html>

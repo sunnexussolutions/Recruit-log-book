@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>System Console | Member Workspace</title>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+
+  <style>
+    :root {
+      --bg-app: #111827;
+      --bg-panel: #1f2937;
+      --nav-bg: rgba(17, 24, 39, 0.85);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-color: rgba(255, 255, 255, 0.12);
+
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --primary-light: rgba(56, 189, 248, 0.15);
+      --danger: #f87171;
+      --danger-hover: #dc2626;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --info: #38bdf8;
+
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-app: #f4f6f8;
+      --bg-panel: rgba(255, 255, 255, 0.90);
+      --nav-bg: rgba(255, 255, 255, 0.88);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: rgba(226, 232, 240, 0.8);
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+      --danger: #e11d48;
+      --success: #10b981;
+      --warning: #f59e0b;
+    }
+
+    /* High contrast text & form rules for Dark Mode in Member Dashboard */
+    [data-theme="dark"] .text-muted,
+    [data-theme="dark"] .small.text-muted,
+    :root:not([data-theme="light"]) .text-muted,
+    :root:not([data-theme="light"]) .small.text-muted {
+      color: #94a3b8 !important;
+    }
+
+    [data-theme="dark"] .form-label,
+    :root:not([data-theme="light"]) .form-label {
+      color: #cbd5e1 !important;
+    }
+
+    [data-theme="dark"] .form-control,
+    :root:not([data-theme="light"]) .form-control {
+      background-color: rgba(15, 23, 42, 0.6) !important;
+      color: #f8fafc !important;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    [data-theme="dark"] .form-control::placeholder,
+    :root:not([data-theme="light"]) .form-control::placeholder {
+      color: #94a3b8 !important;
+      opacity: 0.85 !important;
+    }
+
+    [data-theme="dark"] .table-enterprise th,
+    :root:not([data-theme="light"]) .table-enterprise th {
+      color: #94a3b8 !important;
+      background: rgba(255, 255, 255, 0.05) !important;
+    }
+
+    [data-theme="dark"] .table-enterprise td,
+    :root:not([data-theme="light"]) .table-enterprise td {
+      color: #e2e8f0 !important;
+    }
+
+    @keyframes fadeIn {
+      0% { opacity: 0; transform: translateY(16px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    body {
+      background-color: var(--bg-app);
+      font-family: var(--font-family);
+      color: var(--text-main);
+      font-size: 14.5px;
+      margin: 0;
+      padding-top: 100px;
+      -webkit-font-smoothing: antialiased;
+      animation: fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      min-height: 100vh;
+    }
+
+    /* --- FLOATING GLASS NAVIGATION --- */
+    .topnav {
+      position: fixed;
+      top: 16px;
+      left: 32px;
+      right: 32px;
+      height: 64px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(24px) saturate(1.5);
+      -webkit-backdrop-filter: blur(24px) saturate(1.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1030;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .topnav-brand {
+      color: var(--text-main);
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .topnav-brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), #00f2fe);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 18px;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
+    }
+
+    .topnav-tools {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-main);
+    }
+
+    .theme-toggle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .theme-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(15deg);
+    }
+
+    /* --- HERO MODULE HEADING --- */
+    .subnav {
+      max-width: 1200px;
+      margin: -20px auto 24px auto;
+      padding: 0 32px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .subnav-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .subnav-title {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -0.8px;
+      margin: 0;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .subnav-title i {
+      color: var(--primary);
+    }
+
+    /* --- LAYOUT CONTAINER --- */
+    .hero-section {
+      padding: 32px 0 16px;
+      margin-bottom: 0px;
+      position: relative;
+    }
+
+    .container-app {
+      padding: 0 32px 32px 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* --- HORIZONTAL STATUS RIBBON --- */
+    .status-ribbon {
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 18px;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 24px;
+      transition: var(--transition);
+      position: relative;
+      z-index: 2;
+    }
+
+    .status-ribbon-info {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .ribbon-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ribbon-status {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ribbon-status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--danger);
+      box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.2);
+    }
+
+    .ribbon-status-indicator.active {
+      background: var(--success);
+      box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.25);
+      animation: pulse-dot 2s infinite;
+    }
+
+    @keyframes pulse-dot {
+      0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(52, 211, 153, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+    }
+
+    .ribbon-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .btn-ribbon {
+      padding: 12px 26px;
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-ribbon.check-in {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.35);
+    }
+    
+    .btn-ribbon.check-in:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(56, 189, 248, 0.45);
+    }
+
+    .btn-ribbon.check-out {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-ribbon.check-out:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--text-muted);
+    }
+
+    /* --- PREMIUM SAAS PANELS --- */
+    .panel {
+      background: var(--bg-panel);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      transition: var(--transition);
+    }
+
+    .panel-header {
+      padding: 24px 28px 18px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .panel-title i {
+      color: var(--primary);
+    }
+
+    .panel-body {
+      padding: 24px 28px;
+      flex-grow: 1;
+    }
+
+    .panel-body-flush {
+      padding: 0;
+    }
+
+    /* --- ENTERPRISE TABLES --- */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .table-enterprise {
+      width: 100%;
+      margin: 0;
+      border-collapse: separate;
+      border-spacing: 0;
+    }
+
+    .table-enterprise th {
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      text-align: left;
+    }
+
+    .table-enterprise td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      color: var(--text-main);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .table-enterprise tbody tr:hover td {
+      background-color: rgba(56, 189, 248, 0.05);
+      color: var(--primary);
+    }
+
+    .table-enterprise tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* --- FORMS & BUTTONS --- */
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .form-control {
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      padding: 14px 18px;
+      font-size: 14px;
+      color: var(--text-main);
+      background-color: rgba(0, 0, 0, 0.15);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    [data-theme="light"] .form-control {
+      background-color: #f8fafc;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      background-color: transparent;
+      box-shadow: 0 0 0 4px var(--primary-light);
+      color: var(--text-main);
+      outline: none;
+    }
+
+    .btn-sys {
+      border-radius: 9999px;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 28px;
+      border: none;
+      transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-sys-primary {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+    }
+
+    .btn-sys-primary:hover {
+      background: var(--primary-hover);
+      box-shadow: 0 6px 20px rgba(56, 189, 248, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .status-tag {
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid var(--border-color);
+    }
+
+    /* --- NOTIFICATIONS --- */
+    .notif-bell {
+      position: relative;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .notif-bell:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--danger);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      min-width: 18px;
+      height: 18px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+      border: 2px solid var(--bg-panel);
+    }
+
+    .notif-dropdown {
+      position: absolute;
+      right: 0;
+      top: 50px;
+      width: 340px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      z-index: 999;
+      display: none;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .notif-dropdown.open {
+      display: block;
+      animation: fadeIn 0.2s ease-out forwards;
+    }
+
+    .notif-header {
+      padding: 14px 18px;
+      font-weight: 700;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .notif-item {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .notif-item:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .notif-item .notif-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* --- CHECKOUT REMINDER BANNER --- */
+    #checkoutReminderBanner {
+      position: sticky;
+      top: 64px;
+      z-index: 1020;
+      background: linear-gradient(90deg, #ea580c 0%, #f97316 50%, #ea580c 100%);
+      background-size: 200% auto;
+      animation: bannerSlide 3s linear infinite;
+      color: #ffffff;
+      padding: 12px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: var(--shadow-md);
+      max-width: 1200px;
+      margin: 0 auto 24px auto;
+      border-radius: 14px;
+    }
+
+    #checkoutReminderBanner.visible {
+      display: flex;
+    }
+
+    @keyframes bannerSlide {
+      0% { background-position: 0% center; }
+      100% { background-position: 200% center; }
+    }
+
+    .banner-scroll-btn {
+      background: rgba(255, 255, 255, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: var(--transition);
+    }
+
+    .banner-scroll-btn:hover {
+      background: white;
+      color: #ea580c;
+    }
+
+    /* --- TELEMETRY CARDS --- */
+    .attendance-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+
+    .attendance-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Toast notification */
+    #toastMessage {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-panel);
+      border: 1px solid var(--primary);
+      color: var(--text-main);
+      padding: 14px 24px;
+      border-radius: 14px;
+      box-shadow: var(--shadow-lg);
+      z-index: 9999;
+      display: none;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      animation: fadeIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    @media (max-width: 768px) {
+      body { padding-top: 80px; }
+      .topnav { top: 0; left: 0; right: 0; border-radius: 0; height: 60px; padding: 0 16px; }
+      .topnav-brand span:not(:first-of-type) { display: none; }
+      .status-ribbon { flex-direction: column; align-items: stretch; gap: 16px; text-align: center; padding: 18px 20px !important; }
+      .status-ribbon-info { flex-direction: column; gap: 8px; justify-content: center; border-right: none !important; padding-right: 0 !important; }
+      .ribbon-controls { width: 100%; justify-content: center; }
+      .btn-ribbon { flex: 1; justify-content: center; padding: 10px 16px; }
+      .panel-header { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .panel-body { padding: 16px; }
+      .notif-dropdown { right: -60px; width: 300px; }
+      .app-watermark { width: 340px !important; opacity: 0.03 !important; }
+    }
+
+    @media (max-width: 480px) {
+      .topnav-brand img { height: 30px !important; }
+      .topnav-brand span { font-size: 14px !important; }
+      .subnav-title { font-size: 18px; }
+      .ribbon-title { font-size: 15px; }
+      #toastMessage { left: 16px; right: 16px; bottom: 16px; font-size: 13px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating Background Watermark Logo -->
+  <img src="assets/sun-nexus-logo.png" alt="Watermark" class="app-watermark" style="position: fixed; top: 38%; left: 50%; transform: translate(-50%, -50%); width: 520px; max-width: 85vw; opacity: 0.18; pointer-events: none; z-index: 0; filter: drop-shadow(0 15px 40px rgba(124, 58, 237, 0.25));" />
+
+  <!-- Floating Navigation -->
+  <header class="topnav">
+    <a href="#" class="topnav-brand" style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 48px; height: 48px; min-width: 48px; border: 2px solid var(--primary); border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-panel); box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25); flex-shrink: 0; overflow: hidden; position: relative;">
+        <img src="assets/sun-nexus-logo.png" alt="Sun Nexus Logo" style="width: 220%; height: 220%; max-width: none; max-height: none; object-fit: contain; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+      </div>
+      <span>Recruit Logbook</span>
+      <span style="font-weight: 400; color: var(--text-muted);">|</span>
+      <span style="font-size: 14px; font-weight: 600;">Member Console</span>
+    </a>
+    
+    <div class="topnav-tools">
+      <!-- Theme Toggle -->
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Light/Dark Theme">
+        <i class="bi bi-sun-fill text-warning" id="themeIcon"></i>
+      </button>
+
+      <!-- 🔔 Notification Bell -->
+      <div class="notif-bell" id="notifBell" onclick="toggleNotifDropdown()">
+        <i class="bi bi-bell"></i>
+        <span class="notif-badge" id="notifBadge" style="display:none;">0</span>
+        <div class="notif-dropdown" id="notifDropdown">
+          <div class="notif-header">
+            <span>Notifications</span>
+            <span class="text-info small fw-semibold" style="cursor:pointer" onclick="markAllRead(event)">Mark all read</span>
+          </div>
+          <div id="notifList">
+            <div class="notif-item">
+              <div class="fw-bold">Welcome to Recruit Logbook</div>
+              <div class="text-muted small">System updated to version 2.4</div>
+              <div class="notif-time">Today, 09:00 AM</div>
+            </div>
+            <div class="notif-item">
+              <div class="fw-bold">Daily Protocol Reminder</div>
+              <div class="text-muted small">Remember to commit your daily work log before check-out</div>
+              <div class="notif-time">Today, 09:15 AM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-2 border-start border-secondary ps-3 ms-1">
+        <i class="bi bi-person-circle fs-5" style="color: var(--primary);"></i>
+        <div class="d-none d-sm-flex flex-column" style="line-height:1.2;">
+          <div class="d-flex align-items-center gap-2">
+            <span id="navRecruitId" class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace py-0 px-2" style="font-size:10px;">REC-101</span>
+            <span id="navUserName" style="font-size: 13.5px; font-weight: 700;">Team Member</span>
+          </div>
+          <span id="navUserRole" style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Member</span>
+        </div>
+        <button class="btn btn-sm btn-link text-decoration-none ms-1" style="color: var(--text-muted);" onclick="logout()" title="Logout">
+          <i class="bi bi-box-arrow-right fs-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Header -->
+  <div class="hero-section">
+    <div class="subnav">
+      <div class="subnav-content">
+        <h1 class="subnav-title"><i class="bi bi-person-workspace"></i> Operations Dashboard</h1>
+        <span class="status-tag"><i class="bi bi-shield-check me-1"></i> Active Session</span>
+      </div>
+    </div>
+
+    <!-- ⚠️ Checkout Reminder Banner (Shown when CHECKED_IN + report pending) -->
+    <div id="checkoutReminderBanner" role="alert">
+      <div class="d-flex align-items-center gap-2">
+        <span class="fs-5">⚠️</span>
+        <span>You are checked in but have <strong>not submitted today's work report</strong>. Please submit your protocol report before checking out.</span>
+      </div>
+      <button class="banner-scroll-btn" onclick="document.getElementById('memberWorkDone').focus(); window.scrollTo({top: 300, behavior: 'smooth'});">
+        📝 Submit Report Now
+      </button>
+    </div>
+
+    <div class="container-app">
+      <!-- 1️⃣ & 2️⃣ TOP CARDS 2-COLUMN GRID (Exposes center watermark logo matching Admin Panel) -->
+      <div class="row g-4 mb-4">
+        <!-- Daily Attendance Card -->
+        <div class="col-12 col-lg-6">
+          <div class="status-ribbon h-100 flex-column align-items-start justify-content-between p-4 mb-0">
+            <div class="w-100 d-flex justify-content-between align-items-center mb-3">
+              <h2 class="ribbon-title mb-0"><i class="bi bi-clock-history text-primary"></i> Daily Attendance</h2>
+              <div id="attendanceMsg" class="small fw-bold text-info mb-0"></div>
+            </div>
+            
+            <div class="my-2">
+              <h3 id="statusText" class="ribbon-status fs-4 fw-extrabold mb-1">
+                <div id="statusDot" class="ribbon-status-indicator"></div>
+                STATUS: <span id="statusLabel">NOT CHECKED IN</span>
+              </h3>
+              <div class="small text-muted">Record your operational presence today</div>
+
+              <!-- ⚠️ Checkout Warning Pill (Appears right after status when check out clicked without report) -->
+              <div id="checkoutWarningPill" class="mt-3" style="display: none;">
+                <div style="background: #fffbeb; border: 1.5px solid #fde68a; color: #92400e; border-radius: 50px; padding: 8px 18px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);">
+                  <span style="font-size: 15px;">⚠️</span>
+                  <span>Please submit your daily work report first.</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="ribbon-controls w-100 gap-2 mt-3 pt-3 border-top">
+              <button id="checkInBtn" class="btn-ribbon check-in flex-grow-1" onclick="handleCheckIn()">
+                <i class="bi bi-box-arrow-in-right me-1"></i> Check In
+              </button>
+              <button id="checkOutBtn" class="btn-ribbon check-out flex-grow-1" onclick="handleCheckOut()">
+                <i class="bi bi-box-arrow-right me-1"></i> Check Out
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Work Protocol Card -->
+        <div class="col-12 col-lg-6">
+          <div class="status-ribbon h-100 flex-column align-items-start justify-content-between p-4 mb-0">
+            <div class="w-100 d-flex justify-content-between align-items-center mb-2">
+              <h2 class="ribbon-title mb-0"><i class="bi bi-journal-check text-warning"></i> Daily Work Protocol</h2>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle fw-bold">REQUIRED</span>
+            </div>
+
+            <div class="w-100 my-2">
+              <textarea id="memberWorkDone" class="form-control" 
+                style="height: 70px; border-radius: 14px; font-size: 13.5px; padding: 10px 14px; resize: none;"
+                placeholder="Briefly document today's engineering achievements..."></textarea>
+            </div>
+
+            <div class="ribbon-controls w-100 mt-2 pt-2">
+              <button class="btn-ribbon check-in w-100 justify-content-center" onclick="submitMemberDailyReport()">
+                <i class="bi bi-cloud-arrow-up me-1"></i> Commit Protocol Report
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTAINER WITH REMAINING FEATURES -->
+  <main class="container-app">
+
+    <!-- 3️⃣ ATTENDANCE ANALYTICS -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="d-flex align-items-center gap-3">
+          <div class="p-2 rounded-3 bg-primary-light text-primary">
+            <i class="bi bi-activity fs-4"></i>
+          </div>
+          <div>
+            <h2 class="panel-title mb-0">Attendance Analytics</h2>
+            <div class="small text-muted">Live telemetry of your operational footprint</div>
+          </div>
+        </div>
+        <div>
+          <input type="month" id="attendanceMonthPicker" class="form-control form-control-sm text-center fw-bold" style="min-width: 170px;" onchange="loadAttendanceAnalytics()" />
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <!-- Attendance Stats Header Card -->
+        <div id="attendancePercentageCard" class="p-3 mb-4 rounded-4 bg-primary-light border border-primary border-opacity-25 d-flex align-items-center justify-content-between">
+          <div class="d-flex align-items-center gap-3">
+            <i class="bi bi-speedometer2 fs-2 text-primary"></i>
+            <div>
+              <div class="small text-uppercase fw-bold text-muted" style="font-size: 11px; letter-spacing: 0.5px;">Monthly Attendance Rate</div>
+              <div class="fs-4 fw-extrabold text-primary" id="attendanceRateText">—</div>
+            </div>
+          </div>
+          <div class="badge bg-secondary rounded-pill px-3 py-2 fw-bold" id="attendanceStandingBadge"><i class="bi bi-dash-circle me-1"></i> No Records Yet</div>
+        </div>
+
+        <!-- Attendance Logs Cards -->
+        <div id="attendanceHistoryBody" class="d-flex flex-column gap-3">
+          <!-- Populated via JS -->
+        </div>
+
+        <div id="attendanceSummaryBar" class="pt-4 mt-3 border-top d-flex justify-content-center gap-4 flex-wrap small fw-bold text-muted">
+          <span><i class="bi bi-circle-fill text-success me-1"></i> Present: <strong id="summaryPresent">0</strong></span>
+          <span><i class="bi bi-circle-fill text-warning me-1"></i> Late: <strong id="summaryLate">0</strong></span>
+          <span><i class="bi bi-circle-fill text-danger me-1"></i> Absent: <strong id="summaryAbsent">0</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4️⃣ ARCHIVE: MY WORK REPORTS -->
+    <div class="panel mt-4">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <i class="bi bi-journal-text"></i> Archive: My Work Reports 
+          <span id="workReportCount" class="badge bg-primary-light text-primary rounded-pill px-3 ms-2 fw-bold" style="font-size: 12px;">0</span>
+        </h2>
+      </div>
+      <div class="panel-body-flush table-responsive" style="max-height:350px;">
+        <table class="table-enterprise">
+          <thead>
+            <tr>
+              <th style="width:20%;">Date & Time</th>
+              <th style="width:20%;">Context / Title</th>
+              <th>Execution Log</th>
+              <th style="width:18%;">Verification Status</th>
+            </tr>
+          </thead>
+          <tbody id="myWorkReportsBody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5️⃣ WEEKLY SKILLS & PROJECT UPDATE -->
+    <div class="panel mt-4 mb-5">
+      <div class="panel-header">
+        <h2 class="panel-title"><i class="bi bi-journal-richtext"></i> Weekly Skills & Project Update</h2>
+        <span class="status-tag" id="weekRangeLabel">This Week</span>
+      </div>
+      <div class="panel-body">
+        <div id="weeklyAlreadySubmitted" class="p-3 mb-4 rounded-3 bg-success-subtle text-success border border-success-subtle d-none align-items-center gap-2">
+          <i class="bi bi-check-circle-fill fs-5"></i> You've already submitted your weekly update for this cycle.
+        </div>
+        
+        <div id="weeklyReportForm">
+          <div class="mb-4">
+            <label class="form-label text-uppercase">1. Skills Learned This Week</label>
+            <textarea id="weeklySkillsLearned" class="form-control" rows="3" style="resize:none;"
+              placeholder="• New technology or tool learned&#10;• Concepts studied&#10;• Training completed"></textarea>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label text-uppercase">2. Project Progress & Key Accomplishments</label>
+            <textarea id="weeklyProjectUpdate" class="form-control" rows="3" style="resize:none;"
+              placeholder="• Feature implementation updates&#10;• Bug fixes & optimizations&#10;• Deliverables completed"></textarea>
+          </div>
+
+          <button class="btn-sys btn-sys-primary w-100 py-3" onclick="submitWeeklySkillsUpdate()">
+            <i class="bi bi-send-check me-1"></i> Submit Weekly Report
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6️⃣ ARCHIVE: MY WEEKLY REPORTS -->
+    <div class="panel mt-4 mb-5">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <i class="bi bi-calendar-range text-purple"></i> Archive: My Weekly Reports
+          <span id="weeklyReportCount" class="badge bg-primary-light text-primary rounded-pill px-3 ms-2 fw-bold" style="font-size: 12px;">0</span>
+        </h2>
+        <div>
+          <input type="text" id="weeklyReportSearch" class="form-control form-control-sm" placeholder="Search weekly archives..." oninput="renderWeeklyReports()" style="border-radius: 20px; font-size: 12px; padding: 6px 14px; min-width: 200px;" />
+        </div>
+      </div>
+      <div class="panel-body-flush table-responsive" style="max-height: 380px;">
+        <table class="table-enterprise">
+          <thead>
+            <tr>
+              <th style="width: 18%;">Submission Date</th>
+              <th style="width: 32%;">Skills Learned</th>
+              <th style="width: 35%;">Project Progress & Deliverables</th>
+              <th style="width: 15%;">Verification Status</th>
+            </tr>
+          </thead>
+          <tbody id="myWeeklyReportsBody">
+            <!-- Rendered via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Alert -->
+  <div id="toastMessage">
+    <i class="bi bi-info-circle-fill text-info fs-5"></i>
+    <span id="toastText">Action completed successfully.</span>
+  </div>
+
+  <script>
+    // --- STATE MANAGEMENT ---
+    const STATE_KEY = 'recruit_logbook_state_v1';
+    
+    let appState = {
+      status: 'NOT_CHECKED_IN',
+      checkInTime: null,
+      reportSubmittedToday: false,
+      workReports: [],
+      attendanceHistory: [],
+      weeklySubmissions: []
+    };
+
+    function loadState() {
+      const saved = localStorage.getItem(STATE_KEY);
+      if (saved) {
+        try {
+          appState = Object.assign({}, appState, JSON.parse(saved));
+        } catch(e) {
+          console.error("State parse error", e);
+        }
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STATE_KEY, JSON.stringify(appState));
+    }
+
+    async function loadMemberData(identifier) {
+      if (!identifier) return false;
+      try {
+        const res = await fetch(`/api/member/${encodeURIComponent(identifier)}/dashboard`);
+        if (res.ok) {
+          const data = await res.json();
+          
+          // Update the session in localStorage with the database ID and regId
+          const sessionRaw = localStorage.getItem('rlb_session_v1');
+          if (sessionRaw) {
+            const currentSession = JSON.parse(sessionRaw);
+            currentSession.id = data.user.id;
+            currentSession.regId = data.user.regId;
+            currentSession.email = data.user.email;
+            currentSession.name = data.user.name;
+            currentSession.role = data.user.role;
+            localStorage.setItem('rlb_session_v1', JSON.stringify(currentSession));
+            
+            if (data.user.name) document.getElementById('navUserName').innerText = data.user.name;
+            if (data.user.role) document.getElementById('navUserRole').innerText = data.user.role;
+            if (data.user.regId) document.getElementById('navRecruitId').innerText = data.user.regId;
+          }
+
+          // Populate appState with live DB state
+          if (data.dashboardState) {
+            appState.status = data.dashboardState.status || 'NOT_CHECKED_IN';
+            appState.checkInTime = data.dashboardState.checkInTime || null;
+            appState.checkInIso = data.dashboardState.checkInIso || null;
+            appState.reportSubmittedToday = !!data.dashboardState.reportSubmittedToday;
+            appState.workReports = data.dashboardState.workReports || [];
+            appState.attendanceHistory = data.dashboardState.attendanceHistory || [];
+            appState.weeklySubmissions = data.dashboardState.weeklySubmissions || [];
+            saveState();
+          }
+          return true;
+        }
+      } catch (err) {
+        console.warn('⚠️ Neon API unreachable — falling back to local cache:', err);
+      }
+      return false;
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // ── Session Guard ── redirect to login if not authenticated
+      const SESSION_KEY = 'rlb_session_v1';
+      const sessionRaw  = localStorage.getItem(SESSION_KEY);
+      if (!sessionRaw) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      // ── Load & display user info ──
+      const session = JSON.parse(sessionRaw);
+      document.getElementById('navUserName').innerText = session.name  || 'Team Member';
+      document.getElementById('navUserRole').innerText = session.role  || 'Member';
+
+      // Load recruit ID from local cache first
+      try {
+        const users = JSON.parse(localStorage.getItem('rlb_users_v1')) || [];
+        const u = users.find(x => x.email === session.email);
+        if (u && u.id) {
+          document.getElementById('navRecruitId').innerText = u.id;
+        } else if (session.regId) {
+          document.getElementById('navRecruitId').innerText = session.regId;
+        } else {
+          document.getElementById('navRecruitId').innerText = 'REC';
+        }
+      } catch(e) {}
+
+      // Load cached state first for fast render
+      loadState();
+
+      const now = new Date();
+      const yearMonth = now.toISOString().slice(0, 7);
+      document.getElementById('attendanceMonthPicker').value = yearMonth;
+
+      renderStatusRibbon();
+      renderWorkReports();
+      renderWeeklyReports();
+      loadAttendanceAnalytics();
+
+      // Fetch live data from database and update
+      const targetIdentifier = session.email || session.regId || session.id;
+      const success = await loadMemberData(targetIdentifier);
+      if (success) {
+        renderStatusRibbon();
+        renderWorkReports();
+        renderWeeklyReports();
+        loadAttendanceAnalytics();
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('rlb_session_v1');
+      localStorage.removeItem(STATE_KEY);
+      window.location.href = 'login.html';
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      const icon = document.getElementById('themeIcon');
+      if (newTheme === 'light') {
+        icon.className = 'bi bi-sun-fill text-warning';
+      } else {
+        icon.className = 'bi bi-moon-stars';
+      }
+    }
+
+    function renderStatusRibbon() {
+      const statusDot = document.getElementById('statusDot');
+      const statusLabel = document.getElementById('statusLabel');
+      const attendanceMsg = document.getElementById('attendanceMsg');
+      const banner = document.getElementById('checkoutReminderBanner');
+
+      if (appState.status === 'CHECKED_IN') {
+        statusDot.className = 'ribbon-status-indicator pulse-green';
+        statusDot.style.background = 'var(--success)';
+        statusLabel.innerText = 'CHECKED IN';
+        statusLabel.style.color = 'var(--success)';
+        
+        // Calculate dynamic live logged in duration
+        const checkInIso = appState.checkInIso ? new Date(appState.checkInIso) : new Date();
+        const diffMs = Math.max(0, new Date() - checkInIso);
+        const hrs = Math.floor(diffMs / 3600000);
+        const mins = Math.floor((diffMs % 3600000) / 60000);
+        const secs = Math.floor((diffMs % 60000) / 1000);
+        const liveDuration = hrs > 0 ? `${hrs}h ${mins}m ${secs}s` : `${mins}m ${secs}s`;
+
+        attendanceMsg.innerText = `Active Duty | Time Logged: ${liveDuration}`;
+
+        if (!appState.reportSubmittedToday) {
+          banner.classList.add('visible');
+        } else {
+          banner.classList.remove('visible');
+        }
+      } else if (appState.status === 'CHECKED_OUT') {
+        statusDot.className = 'ribbon-status-indicator';
+        statusDot.style.background = 'var(--text-muted)';
+        statusLabel.innerText = 'CHECKED OUT';
+        statusLabel.style.color = 'var(--text-muted)';
+        attendanceMsg.innerText = 'Day completed';
+        banner.classList.remove('visible');
+      } else {
+        statusDot.className = 'ribbon-status-indicator';
+        statusDot.style.background = 'var(--danger)';
+        statusLabel.innerText = 'NOT CHECKED IN';
+        statusLabel.style.color = 'var(--text-main)';
+        attendanceMsg.innerText = '';
+        banner.classList.remove('visible');
+      }
+    }
+
+    // ── 🌐 GEOFENCE LOCATION VERIFICATION ──
+    const GEOFENCE_KEY = 'rlb_geofence_v1';
+
+    function calculateDistanceMeters(lat1, lon1, lat2, lon2) {
+      const R = 6371000; // Earth radius in meters
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return Math.round(R * c);
+    }
+
+    async function fetchGeofenceConfig() {
+      try {
+        const res = await fetch('/api/config/geofence');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.geofence) {
+            localStorage.setItem(GEOFENCE_KEY, JSON.stringify(data.geofence));
+            return data.geofence;
+          }
+        }
+      } catch(e) {}
+
+      const local = localStorage.getItem(GEOFENCE_KEY);
+      if (local) {
+        try { return JSON.parse(local); } catch(e){}
+      }
+      return {
+        enabled: true,
+        locationName: 'Sun Nexus Main Campus HQ',
+        latitude: 18.5204,
+        longitude: 73.8567,
+        radiusMeters: 300
+      };
+    }
+
+    async function handleCheckIn() {
+      if (appState.status === 'CHECKED_IN') {
+        showToast('You are already checked in today!');
+        return;
+      }
+
+      const geo = await fetchGeofenceConfig();
+
+      if (geo.enabled) {
+        if (!navigator.geolocation) {
+          showToast('⚠️ Geolocation is not supported by your browser.');
+          performCheckInProcess('Default / Remote');
+          return;
+        }
+
+        showToast('📡 Verifying your GPS location with Campus Geofence...');
+        
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const memberLat = pos.coords.latitude;
+            const memberLng = pos.coords.longitude;
+            const distMeters = calculateDistanceMeters(memberLat, memberLng, geo.latitude, geo.longitude);
+
+            if (distMeters <= geo.radiusMeters) {
+              const locationNote = `📍 ${geo.locationName} (${distMeters}m away)`;
+              showToast(`🎯 Location Verified! Within ${distMeters}m of ${geo.locationName}`);
+              performCheckInProcess(locationNote);
+            } else {
+              const distKm = (distMeters / 1000).toFixed(2);
+              const warningPill = document.getElementById('checkoutWarningPill');
+              if (warningPill) {
+                warningPill.innerHTML = `
+                  <div style="background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; border-radius: 50px; padding: 10px 20px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18);">
+                    <span style="font-size: 16px;">🛑</span>
+                    <span><strong>Geofence Check Failed:</strong> You are ${distKm} km away from <strong>${geo.locationName}</strong>. Maximum allowed distance is ${geo.radiusMeters} meters.</span>
+                  </div>
+                `;
+                warningPill.style.display = 'block';
+              }
+              showToast(`❌ Location Check Failed: You are ${distKm} km from ${geo.locationName}. Allowed radius: ${geo.radiusMeters}m`);
+            }
+          },
+          (err) => {
+            showToast(`⚠️ Location Permission Denied: Please enable browser location to check in.`);
+          },
+          { enableHighAccuracy: true, timeout: 10000 }
+        );
+      } else {
+        performCheckInProcess('Global / Remote Check-in');
+      }
+    }
+
+    function performCheckInProcess(locationNote = 'Verified Campus') {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toISOString().split('T')[0];
+
+      appState.status = 'CHECKED_IN';
+      appState.checkInTime = timeStr;
+      appState.checkInIso = now.toISOString();
+      appState.reportSubmittedToday = false;
+
+      const warningPill = document.getElementById('checkoutWarningPill');
+      if (warningPill) warningPill.style.display = 'none';
+
+      const existingToday = appState.attendanceHistory.find(h => h.date === dateStr);
+      if (!existingToday) {
+        appState.attendanceHistory.unshift({
+          date: dateStr,
+          checkIn: timeStr,
+          checkInIso: now.toISOString(),
+          checkOut: '--:--',
+          hours: 'Active',
+          status: 'Present',
+          location: locationNote
+        });
+      }
+
+      saveState();
+      syncGlobalAttendance('CHECKED_IN', timeStr, '--:--');
+      renderStatusRibbon();
+      loadAttendanceAnalytics();
+      showToast(`✅ Successfully Checked In at ${timeStr} [${locationNote}]`);
+    }
+
+    function handleCheckOut() {
+      if (appState.status === 'NOT_CHECKED_IN') {
+        showToast('⚠️ Please Check In first!');
+        return;
+      }
+      if (appState.status === 'CHECKED_OUT') {
+        showToast('You have already checked out for today.');
+        return;
+      }
+
+      if (!appState.reportSubmittedToday) {
+        const warningPill = document.getElementById('checkoutWarningPill');
+        if (warningPill) {
+          warningPill.innerHTML = `
+            <div style="background: #fffbeb; border: 1.5px solid #fde68a; color: #92400e; border-radius: 50px; padding: 8px 18px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.18);">
+              <span style="font-size: 15px;">⚠️</span>
+              <span>Please submit your daily work report first.</span>
+            </div>
+          `;
+          warningPill.style.display = 'block';
+        }
+        showToast('⚠️ Please submit your daily work report first.');
+        document.getElementById('memberWorkDone').focus();
+        return;
+      }
+
+      // ── 📅 SATURDAY CHECKOUT RULE ──
+      // On Saturdays, member MUST submit their weekly skills & project report before checking out!
+      const isSaturday = new Date().getDay() === 6;
+      const todayStr = new Date().toISOString().split('T')[0];
+      const weeklySubmittedToday = (appState.weeklySubmissions || []).some(w => w.date === todayStr);
+
+      if (isSaturday && !weeklySubmittedToday) {
+        const warningPill = document.getElementById('checkoutWarningPill');
+        if (warningPill) {
+          warningPill.innerHTML = `
+            <div style="background: #fef2f2; border: 1.5px solid #fca5a5; color: #991b1b; border-radius: 50px; padding: 8px 18px; font-weight: 700; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.18);">
+              <span style="font-size: 15px;">📅</span>
+              <span>Saturday Rule: Please submit your Weekly Skills & Project Report before checkout!</span>
+            </div>
+          `;
+          warningPill.style.display = 'block';
+        }
+        showToast('⚠️ Saturday Checkout Blocked: Weekly report required before checking out!');
+        const weeklyField = document.getElementById('weeklySkillsLearned');
+        if (weeklyField) {
+          weeklyField.focus();
+          weeklyField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+      }
+
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const dateStr = now.toISOString().split('T')[0];
+
+      appState.status = 'CHECKED_OUT';
+      
+      const todayEntry = appState.attendanceHistory.find(h => h.date === dateStr);
+      if (todayEntry) {
+        todayEntry.checkOut = timeStr;
+        
+        // Compute dynamic logged hours
+        const checkInTimeObj = todayEntry.checkInIso ? new Date(todayEntry.checkInIso) : (appState.checkInIso ? new Date(appState.checkInIso) : now);
+        const diffMs = Math.max(0, now - checkInTimeObj);
+        const hrs = Math.floor(diffMs / 3600000);
+        const mins = Math.floor((diffMs % 3600000) / 60000);
+        todayEntry.hours = hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+      }
+
+      saveState();
+      syncGlobalAttendance('CHECKED_OUT', todayEntry ? todayEntry.checkIn : timeStr, timeStr, todayEntry ? todayEntry.hours : '8h 0m');
+      renderStatusRibbon();
+      loadAttendanceAnalytics();
+      showToast(`👋 Successfully Checked Out at ${timeStr}. Have a great evening!`);
+    }
+
+    function submitMemberDailyReport() {
+      const text = document.getElementById('memberWorkDone').value.trim();
+      if (!text) {
+        showToast('⚠️ Please document your work achievements before committing.');
+        return;
+      }
+
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 10) + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      appState.workReports.unshift({
+        date: timestamp,
+        title: 'Daily Operations Protocol',
+        details: text,
+        status: 'PENDING'
+      });
+
+      appState.reportSubmittedToday = true;
+      const warningPill = document.getElementById('checkoutWarningPill');
+      if (warningPill) warningPill.style.display = 'none';
+      document.getElementById('memberWorkDone').value = '';
+
+      saveState();
+      syncGlobalWorkReport(timestamp, 'Daily Operations Protocol', text);
+      renderStatusRibbon();
+      renderWorkReports();
+      showToast('📝 Daily Work Report Committed! Status: PENDING Admin Verification.');
+    }
+
+    // ── Global Admin Telemetry Sync ──
+    const GLOBAL_LOGS_KEY = 'rlb_global_logs_v1';
+
+    function getGlobalLogs() {
+      try { return JSON.parse(localStorage.getItem(GLOBAL_LOGS_KEY)) || { attendance: [], workReports: [], weeklyUpdates: [] }; }
+      catch(e) { return { attendance: [], workReports: [], weeklyUpdates: [] }; }
+    }
+
+    function syncGlobalAttendance(status, checkIn, checkOut, hoursLogged) {
+      const sessionRaw = localStorage.getItem('rlb_session_v1');
+      const session = sessionRaw ? JSON.parse(sessionRaw) : { name: 'Recruit Member', email: 'member@sunnexus.com' };
+      
+      const logs = getGlobalLogs();
+      const existingIdx = logs.attendance.findIndex(a => a.email === session.email);
+      const entry = {
+        name: session.name || 'Recruit Member',
+        email: session.email || 'member@sunnexus.com',
+        status: status,
+        checkIn: checkIn,
+        checkOut: checkOut,
+        hours: hoursLogged || (status === 'CHECKED_OUT' ? '8h 30m' : 'Active')
+      };
+
+      if (existingIdx >= 0) {
+        logs.attendance[existingIdx] = entry;
+      } else {
+        logs.attendance.unshift(entry);
+      }
+
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(logs));
+
+      // 🐘 Neon Database API Sync
+      fetch('/api/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session.id || null,
+          date: new Date().toISOString().split('T')[0],
+          status: status,
+          checkInTime: checkIn,
+          checkOutTime: checkOut,
+          hoursLogged: hoursLogged || 'Active',
+          checkInIso: new Date().toISOString()
+        })
+      }).catch(err => console.warn('Neon DB Sync Warning:', err));
+    }
+
+    function syncGlobalWorkReport(dateStr, title, details) {
+      const sessionRaw = localStorage.getItem('rlb_session_v1');
+      const session = sessionRaw ? JSON.parse(sessionRaw) : { name: 'Recruit Member', email: 'member@sunnexus.com' };
+
+      const logs = getGlobalLogs();
+      logs.workReports.unshift({
+        name: session.name || 'Recruit Member',
+        email: session.email || 'member@sunnexus.com',
+        date: dateStr,
+        title: title,
+        details: details,
+        status: 'PENDING'
+      });
+
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(logs));
+
+      // 🐘 Neon Database API Sync
+      fetch('/api/reports/daily', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session.id || null,
+          dateStr: dateStr,
+          title: title,
+          details: details
+        })
+      }).catch(err => console.warn('Neon DB Sync Warning:', err));
+    }
+
+    function syncGlobalWeeklyReport(dateStr, skills, updates) {
+      const sessionRaw = localStorage.getItem('rlb_session_v1');
+      const session = sessionRaw ? JSON.parse(sessionRaw) : { name: 'Recruit Member', email: 'member@sunnexus.com' };
+
+      const logs = getGlobalLogs();
+      logs.weeklyUpdates = logs.weeklyUpdates || [];
+      logs.weeklyUpdates.unshift({
+        name: session.name || 'Recruit Member',
+        email: session.email || 'member@sunnexus.com',
+        date: dateStr,
+        skills: skills,
+        updates: updates,
+        status: 'PENDING'
+      });
+
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(logs));
+
+      // 🐘 Neon Database API Sync
+      fetch('/api/reports/weekly', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: session.id || null,
+          submissionDate: dateStr,
+          skillsLearned: skills,
+          projectUpdates: updates
+        })
+      }).catch(err => console.warn('Neon DB Sync Warning:', err));
+    }
+
+    function loadAttendanceAnalytics() {
+      const container = document.getElementById('attendanceHistoryBody');
+      container.innerHTML = '';
+
+      const pickerEl = document.getElementById('attendanceMonthPicker');
+      const selectedMonth = pickerEl && pickerEl.value ? pickerEl.value : new Date().toISOString().slice(0, 7);
+
+      // Dynamically filter attendance history by selected YYYY-MM
+      const filteredHistory = appState.attendanceHistory.filter(item => item.date.startsWith(selectedMonth));
+
+      let presentCount = 0;
+      let lateCount = 0;
+      let absentCount = 0;
+
+      if (filteredHistory.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-5" style="color: var(--text-muted);">
+            <i class="bi bi-calendar-x fs-1 d-block mb-3" style="opacity:0.3;"></i>
+            <div class="fw-bold">No attendance records for ${selectedMonth}</div>
+            <div class="small mt-1">Check in during this month to build your attendance log</div>
+          </div>
+        `;
+        document.getElementById('summaryPresent').innerText = 0;
+        document.getElementById('summaryLate').innerText = 0;
+        document.getElementById('summaryAbsent').innerText = 0;
+        document.getElementById('attendanceRateText').innerText = '0%';
+        const badge = document.getElementById('attendanceStandingBadge');
+        if (badge) { badge.className = 'badge bg-secondary rounded-pill px-3 py-2 fw-bold'; badge.innerHTML = '<i class="bi bi-dash-circle me-1"></i> No Records'; }
+        return;
+      }
+
+      filteredHistory.forEach(item => {
+        if (item.status === 'Present') presentCount++;
+        else if (item.status === 'Late') lateCount++;
+        else absentCount++;
+
+        const card = document.createElement('div');
+        card.className = 'attendance-card';
+        card.innerHTML = `
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-2 rounded-3 bg-primary-light text-primary">
+              <i class="bi bi-calendar2-check fs-5"></i>
+            </div>
+            <div>
+              <div class="fw-bold">${item.date}</div>
+              <div class="small text-muted">Clock In: <span class="text-main">${item.checkIn}</span> | Clock Out: <span class="text-main">${item.checkOut}</span></div>
+            </div>
+          </div>
+          <div class="d-flex align-items-center gap-3">
+            <span class="badge bg-secondary-subtle text-muted rounded-pill px-3 py-2 fw-semibold">${item.hours}</span>
+            <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-2 fw-bold">${item.status}</span>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('summaryPresent').innerText = presentCount;
+      document.getElementById('summaryLate').innerText = lateCount;
+      document.getElementById('summaryAbsent').innerText = absentCount;
+
+      const total = presentCount + lateCount + absentCount;
+      const rate = total > 0 ? ((presentCount / total) * 100).toFixed(1) : '0.0';
+      document.getElementById('attendanceRateText').innerText = `${rate}%`;
+
+      const badge = document.getElementById('attendanceStandingBadge');
+      if (badge) {
+        const r = parseFloat(rate);
+        if (r >= 90) { badge.className = 'badge bg-success rounded-pill px-3 py-2 fw-bold'; badge.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Excellent Standing'; }
+        else if (r >= 75) { badge.className = 'badge bg-warning text-dark rounded-pill px-3 py-2 fw-bold'; badge.innerHTML = '<i class="bi bi-exclamation-circle me-1"></i> Good Standing'; }
+        else { badge.className = 'badge bg-danger rounded-pill px-3 py-2 fw-bold'; badge.innerHTML = '<i class="bi bi-x-circle me-1"></i> Needs Attention'; }
+      }
+    }
+
+    function renderWorkReports() {
+      const tbody = document.getElementById('myWorkReportsBody');
+      document.getElementById('workReportCount').innerText = appState.workReports.length;
+
+      if (appState.workReports.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4">No work reports logged yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = appState.workReports.map(r => {
+        const isVerified = r.status === 'VERIFIED';
+        const statusBadge = isVerified ?
+          `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold"><i class="bi bi-check-all me-1"></i> VERIFIED</span>` :
+          `<span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-bold"><i class="bi bi-hourglass-split me-1"></i> PENDING</span>`;
+
+        return `
+          <tr>
+            <td class="fw-bold text-muted">${r.date}</td>
+            <td><span class="badge bg-primary-light text-primary rounded-pill px-3 py-1 fw-semibold">${r.title || 'Daily Protocol'}</span></td>
+            <td style="line-height: 1.5;">${r.details}</td>
+            <td>${statusBadge}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function submitWeeklySkillsUpdate() {
+      const skills = document.getElementById('weeklySkillsLearned').value.trim();
+      const updates = document.getElementById('weeklyProjectUpdate').value.trim();
+
+      if (!skills && !updates) {
+        showToast('⚠️ Please enter skills learned or project updates.');
+        return;
+      }
+
+      const dateStr = new Date().toISOString().split('T')[0];
+      appState.weeklySubmissions.push({
+        date: dateStr,
+        skills,
+        updates,
+        status: 'PENDING'
+      });
+
+      saveState();
+      syncGlobalWeeklyReport(dateStr, skills, updates);
+      renderWeeklyReports();
+
+      // Hide the checkout warning pill if it was displayed
+      const warningPill = document.getElementById('checkoutWarningPill');
+      if (warningPill) warningPill.style.display = 'none';
+
+      document.getElementById('weeklySkillsLearned').value = '';
+      document.getElementById('weeklyProjectUpdate').value = '';
+      
+      const alertBox = document.getElementById('weeklyAlreadySubmitted');
+      if (alertBox) {
+        alertBox.classList.remove('d-none');
+        alertBox.classList.add('d-flex');
+      }
+
+      showToast('🚀 Weekly Skills & Project Update Submitted! Status: PENDING Admin Verification.');
+    }
+
+    function renderWeeklyReports() {
+      const tbody = document.getElementById('myWeeklyReportsBody');
+      if (!tbody) return;
+
+      const search = (document.getElementById('weeklyReportSearch')?.value || '').toLowerCase();
+      const list = (appState.weeklySubmissions || []).filter(w => {
+        if (!search) return true;
+        return (w.date && w.date.toLowerCase().includes(search)) ||
+               (w.skills && w.skills.toLowerCase().includes(search)) ||
+               (w.updates && w.updates.toLowerCase().includes(search));
+      });
+
+      const countEl = document.getElementById('weeklyReportCount');
+      if (countEl) countEl.innerText = list.length;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted py-4"><i class="bi bi-folder-x fs-4 d-block mb-2 opacity-50"></i>No weekly reports archived yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = list.map(r => {
+        const isVerified = r.status === 'VERIFIED';
+        const statusBadge = isVerified ?
+          `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold"><i class="bi bi-check-all me-1"></i> VERIFIED</span>` :
+          `<span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-bold"><i class="bi bi-hourglass-split me-1"></i> PENDING</span>`;
+
+        return `
+          <tr>
+            <td class="fw-bold text-muted" style="font-size:12.5px;">
+              <i class="bi bi-calendar2-week me-1 text-primary"></i> ${r.date}
+            </td>
+            <td style="white-space: pre-wrap; line-height: 1.5; font-size: 13px;">${r.skills || '<em>None logged</em>'}</td>
+            <td style="white-space: pre-wrap; line-height: 1.5; font-size: 13px;">${r.updates || '<em>None logged</em>'}</td>
+            <td>${statusBadge}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function toggleNotifDropdown() {
+      document.getElementById('notifDropdown').classList.toggle('open');
+    }
+
+    function markAllRead(e) {
+      e.stopPropagation();
+      document.getElementById('notifBadge').style.display = 'none';
+      document.getElementById('notifDropdown').classList.remove('open');
+      showToast('All notifications marked as read');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toastMessage');
+      document.getElementById('toastText').innerText = message;
+      toast.style.display = 'flex';
+      setTimeout(() => {
+        toast.style.display = 'none';
+      }, 3500);
+    }
+  </script>
+</body>
+</html>

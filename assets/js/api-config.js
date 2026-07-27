@@ -1,0 +1,44 @@
+// ============================================================
+// CENTRAL API CONFIGURATION FOR WEB & CAPACITOR MOBILE APPS
+// ============================================================
+
+(function () {
+  const SERVER_URL_KEY = 'rlb_custom_api_url_v1';
+  let storedUrl = localStorage.getItem(SERVER_URL_KEY);
+
+  // Auto-detect environment:
+  // 1. Web browser running on HTTP/HTTPS
+  // 2. Android emulator (10.0.2.2:3000)
+  // 3. Physical mobile device (custom IP or Cloud URL)
+  let defaultBase = '';
+
+  if (window.location.protocol.startsWith('http') && window.location.hostname !== 'localhost') {
+    defaultBase = window.location.origin;
+  } else if (window.location.port === '3000') {
+    defaultBase = 'http://localhost:3000';
+  } else if (window.Capacitor || window.location.protocol === 'capacitor:' || window.location.protocol === 'file:') {
+    // Native mobile app: use stored URL, or local IP, or cloud production URL
+    defaultBase = storedUrl || 'http://10.0.2.2:3000';
+  } else {
+    defaultBase = 'http://localhost:3000';
+  }
+
+  window.API_BASE_URL = storedUrl || defaultBase;
+
+  // Helper function to build API endpoint URLs
+  window.getApiUrl = function (endpoint) {
+    const base = (window.API_BASE_URL || '').replace(/\/$/, '');
+    const path = (endpoint || '').replace(/^\//, '');
+    return base ? `${base}/${path}` : `/${path}`;
+  };
+
+  // Helper to set custom API URL (e.g. for testing with laptop Wi-Fi IP)
+  window.setCustomApiUrl = function (url) {
+    if (url) {
+      localStorage.setItem(SERVER_URL_KEY, url);
+    } else {
+      localStorage.removeItem(SERVER_URL_KEY);
+    }
+    window.location.reload();
+  };
+})();

@@ -1,0 +1,15 @@
+{
+  "appId": "com.sunnexus.recruitlogbook",
+  "appName": "Recruit Logbook",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#6C63FF"
+    }
+  }
+}

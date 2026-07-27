@@ -1,0 +1,2263 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Command Center | Recruit Logbook</title>
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <style>
+    :root {
+      --bg-app: #111827;
+      --bg-panel: #1f2937;
+      --nav-bg: rgba(17, 24, 39, 0.85);
+      --text-main: #f9fafb;
+      --text-muted: #9ca3af;
+      --border-color: rgba(255, 255, 255, 0.12);
+
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --primary-light: rgba(56, 189, 248, 0.15);
+      --purple-accent: #a78bfa;
+      --purple-light: rgba(167, 139, 250, 0.15);
+      --danger: #f87171;
+      --danger-hover: #dc2626;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --info: #38bdf8;
+
+      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.4);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+      --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.7);
+      --radius-md: 16px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    [data-theme="light"] {
+      --bg-app: #f4f6f8;
+      --bg-panel: rgba(255, 255, 255, 0.90);
+      --nav-bg: rgba(255, 255, 255, 0.88);
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: rgba(226, 232, 240, 0.8);
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --primary-light: #e0f2fe;
+      --purple-accent: #7c3aed;
+      --purple-light: rgba(124, 58, 237, 0.1);
+      --danger: #e11d48;
+      --danger-hover: #be123c;
+      --success: #10b981;
+      --info: #0284c7;
+    }
+
+    /* High contrast text rules for Dark Mode without affecting Light Mode */
+    .metric-label-title {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .metric-label-sub {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+      color: var(--text-muted);
+    }
+
+    [data-theme="dark"] .metric-label-title,
+    :root:not([data-theme="light"]) .metric-label-title {
+      color: #94a3b8 !important; /* Crisp light slate blue for dark mode */
+    }
+
+    [data-theme="dark"] .metric-label-sub,
+    :root:not([data-theme="light"]) .metric-label-sub {
+      color: #cbd5e1 !important; /* Crisp light slate for dark mode sublabels */
+    }
+
+    [data-theme="dark"] .text-muted,
+    :root:not([data-theme="light"]) .text-muted {
+      color: #94a3b8 !important;
+    }
+
+    .text-purple {
+      color: var(--purple-accent) !important;
+    }
+    .bg-purple-subtle {
+      background-color: var(--purple-light) !important;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      margin: 0;
+      padding-top: 80px;
+      min-height: 100vh;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* --- FLOATING NAVBAR --- */
+    .topnav {
+      position: fixed;
+      top: 12px;
+      left: 24px;
+      right: 24px;
+      height: 64px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 1000;
+      box-shadow: var(--shadow-md);
+      transition: var(--transition);
+    }
+
+    .topnav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-main);
+      text-decoration: none;
+    }
+
+    .topnav-brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #7c3aed, #0284c7);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 4px 12px rgba(124, 58, 237, 0.35);
+    }
+
+    .topnav-tools {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .theme-toggle-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      transition: var(--transition);
+    }
+
+    .theme-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(15deg);
+    }
+
+    /* --- HERO HEADER --- */
+    .hero-section {
+      padding: 10px 0 24px;
+    }
+
+    .subnav {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px 28px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .subnav-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* --- STATS CARDS --- */
+    .metric-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 22px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: var(--transition);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.1;
+      margin-top: 4px;
+    }
+
+    .metric-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    /* --- PANELS & TABLES --- */
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .panel-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-body {
+      padding: 24px;
+    }
+
+    /* Custom Table Styling */
+    .custom-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      color: var(--text-main);
+    }
+
+    .custom-table th {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 14px 18px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .custom-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+      font-size: 13.5px;
+    }
+
+    .custom-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .custom-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .status-pill {
+      padding: 5px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-pill.active { background: rgba(52, 211, 153, 0.15); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.3); }
+    .status-pill.offline { background: rgba(156, 163, 175, 0.15); color: #9ca3af; border: 1px solid rgba(156, 163, 175, 0.3); }
+    .status-pill.checked-out { background: rgba(248, 113, 113, 0.15); color: #f87171; border: 1px solid rgba(248, 113, 113, 0.3); }
+
+    /* Search & Filter inputs */
+    .admin-input {
+      background: var(--bg-app);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      border-radius: 10px;
+      padding: 8px 14px;
+      font-size: 13px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .admin-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+
+    /* Toast alert */
+    #toastMessage {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-panel);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--primary);
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: none;
+      align-items: center;
+      gap: 12px;
+      z-index: 2000;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @media (max-width: 992px) {
+      .metric-value { font-size: 26px; }
+      .subnav { flex-direction: column; align-items: stretch !important; gap: 16px; }
+      .subnav > div:last-child { width: 100%; justify-content: flex-start; }
+    }
+
+    @media (max-width: 768px) {
+      body { padding-top: 76px; }
+      .topnav { top: 0; left: 0; right: 0; border-radius: 0; height: 60px; padding: 0 16px; }
+      .topnav-brand span:not(:first-of-type) { display: none; }
+      .hero-section { padding-left: 12px !important; padding-right: 12px !important; }
+      .panel-header { flex-direction: column; align-items: stretch; gap: 12px; }
+      .panel-header .d-flex { flex-direction: column; width: 100%; }
+      .admin-input { width: 100% !important; }
+      .custom-table { display: block; overflow-x: auto; white-space: nowrap; }
+      .app-watermark { width: 340px !important; opacity: 0.03 !important; }
+      #toastMessage { left: 16px; right: 16px; bottom: 16px; font-size: 13px; }
+    }
+
+    @media (max-width: 480px) {
+      .topnav-brand img { height: 30px !important; }
+      .topnav-brand span { font-size: 14px !important; }
+      .subnav-title { font-size: 18px; }
+      .metric-card { padding: 16px; }
+      .metric-value { font-size: 24px; }
+      .metric-icon { width: 44px; height: 44px; font-size: 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating Background Watermark Logo -->
+  <img src="assets/sun-nexus-logo.png" alt="Watermark" class="app-watermark" style="position: fixed; top: 38%; left: 50%; transform: translate(-50%, -50%); width: 520px; max-width: 85vw; opacity: 0.18; pointer-events: none; z-index: 0; filter: drop-shadow(0 15px 40px rgba(124, 58, 237, 0.25));" />
+
+  <!-- Floating Navigation -->
+  <header class="topnav">
+    <a href="#" class="topnav-brand" style="display: flex; align-items: center; gap: 12px;">
+      <div style="width: 48px; height: 48px; min-width: 48px; border: 2px solid var(--purple-accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-panel); box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25); flex-shrink: 0; overflow: hidden; position: relative;">
+        <img src="assets/sun-nexus-logo.png" alt="Sun Nexus Logo" style="width: 220%; height: 220%; max-width: none; max-height: none; object-fit: contain; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" />
+      </div>
+      <span>Recruit Logbook</span>
+      <span style="font-weight: 400; color: var(--text-muted);">|</span>
+      <span style="font-size: 14px; font-weight: 700; color: var(--purple-accent);">Admin Command</span>
+    </a>
+    
+    <div class="topnav-tools">
+      <!-- Theme Toggle -->
+      <button class="theme-toggle-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Toggle Theme">
+        <i class="bi bi-sun-fill text-warning" id="themeIcon"></i>
+      </button>
+
+      <!-- System Notification Bell -->
+      <div class="position-relative">
+        <button class="theme-toggle-btn border-0 position-relative" id="adminNotifBtn" onclick="toggleAdminNotifs(event)" title="System Notifications">
+          <i class="bi bi-bell-fill" style="color: var(--purple-accent);"></i>
+          <span id="adminNotifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 10px; display: none;">0</span>
+        </button>
+
+        <!-- Notification Dropdown Panel -->
+        <div id="adminNotifDropdown" class="shadow-lg" style="width: 350px; max-height: 480px; border-radius: 18px; border: 1px solid var(--border-color); background: var(--bg-panel); color: var(--text-main); position: absolute; right: 0; top: 48px; display: none; z-index: 1050; overflow: hidden;">
+          <div class="p-3 border-bottom d-flex align-items-center justify-content-between" style="background: rgba(255,255,255,0.02);">
+            <div class="fw-bold d-flex align-items-center gap-2" style="font-size: 13.5px;">
+              <i class="bi bi-bell-fill" style="color: var(--purple-accent);"></i> Telemetry Alerts
+              <span id="adminNotifCountBadge" class="badge bg-purple-subtle text-purple rounded-pill px-2" style="font-size: 10px;">0 New</span>
+            </div>
+            <button class="btn btn-sm btn-link text-decoration-none p-0 text-muted" style="font-size: 11px;" onclick="clearAdminNotifs()">Clear All</button>
+          </div>
+          <div id="adminNotifList" class="p-2 overflow-auto" style="max-height: 380px;">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Admin Profile -->
+      <div class="d-flex align-items-center gap-2 border-start border-secondary ps-3 ms-1">
+        <i class="bi bi-person-badge-fill fs-4" style="color: var(--purple-accent);"></i>
+        <div class="d-none d-sm-flex flex-column" style="line-height:1.2;">
+          <span id="navAdminName" style="font-size: 13.5px; font-weight: 800;">Executive Admin</span>
+          <span style="font-size: 11px; color: var(--purple-accent); font-weight: 600;">System Administrator</span>
+        </div>
+        <button class="btn btn-sm btn-link text-decoration-none ms-1" style="color: var(--purple-accent);" onclick="openChangeAdminCredentialsModal()" title="Change Admin Credentials">
+          <i class="bi bi-key-fill fs-5"></i>
+        </button>
+        <button class="btn btn-sm btn-link text-decoration-none ms-1" style="color: var(--text-muted);" onclick="logout()" title="Logout">
+          <i class="bi bi-box-arrow-right fs-5"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="container-fluid px-4 hero-section" style="max-width: 1400px; margin: 0 auto;">
+
+    <!-- Subnav Banner -->
+    <div class="subnav d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <h1 class="subnav-title">
+          <i class="bi bi-speedometer fs-4 text-primary"></i> Executive Operations Command
+        </h1>
+        <div class="small text-muted mt-1">Real-time attendance telemetry, protocol audit, & recruit management <span id="dataSourceBadge" class="ms-2"></span></div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="exportAttendanceCSV()">
+          <i class="bi bi-download me-1"></i> Export Attendance
+        </button>
+        <button class="btn btn-sm btn-outline-primary rounded-pill px-3 fw-bold" onclick="exportReportsCSV()">
+          <i class="bi bi-file-earmark-spreadsheet me-1"></i> Export Reports
+        </button>
+        <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="refreshAdminData()">
+          <i class="bi bi-arrow-clockwise me-1"></i> Live Refresh
+        </button>
+        <button class="btn btn-sm btn-outline-danger rounded-pill px-3 fw-bold" onclick="clearDemoData()">
+          <i class="bi bi-trash3 me-1"></i> Clear Demo Data
+        </button>
+        <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-bold" onclick="seedSampleData()">
+          <i class="bi bi-database-add me-1"></i> Load Demo Data
+        </button>
+      </div>
+    </div>
+
+    <!-- 1️⃣ SYSTEM METRICS OVERVIEW -->
+    <div class="row g-3 mb-4">
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label-title">Registered Recruits</div>
+            <div class="metric-value text-main" id="statTotalRecruits">0</div>
+            <div class="small text-success fw-semibold mt-1"><i class="bi bi-person-check-fill me-1"></i>Active Roster</div>
+          </div>
+          <div class="metric-icon" style="background: rgba(56, 189, 248, 0.15); color: #38bdf8;">
+            <i class="bi bi-people-fill"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label-title">Checked In Today</div>
+            <div class="metric-value text-success" id="statCheckedIn">0</div>
+            <div class="metric-label-sub"><i class="bi bi-clock-history me-1"></i>Active Session</div>
+          </div>
+          <div class="metric-icon" style="background: rgba(52, 211, 153, 0.15); color: #34d399;">
+            <i class="bi bi-box-arrow-in-right"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label-title">Daily Work Protocols</div>
+            <div class="metric-value text-warning" id="statWorkReports">0</div>
+            <div class="small text-warning fw-semibold mt-1"><i class="bi bi-journal-check me-1"></i>Committed Logs</div>
+          </div>
+          <div class="metric-icon" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24;">
+            <i class="bi bi-file-earmark-text-fill"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-sm-6 col-xl-3">
+        <div class="metric-card">
+          <div>
+            <div class="metric-label-title">Avg Attendance Rate</div>
+            <div class="metric-value" style="color: var(--purple-accent);" id="statAttendanceRate">0%</div>
+            <div class="metric-label-sub"><i class="bi bi-graph-up-arrow me-1"></i>Monthly Telemetry</div>
+          </div>
+          <div class="metric-icon" style="background: rgba(167, 139, 250, 0.15); color: var(--purple-accent);">
+            <i class="bi bi-activity"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2️⃣ LIVE ATTENDANCE TELEMETRY MONITOR -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <i class="bi bi-clock-history text-primary"></i> Live Attendance & Duty Monitor
+        </h2>
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <input type="month" id="adminMonthPicker" class="admin-input font-monospace text-center fw-bold" style="width:160px;" onchange="refreshAdminUI()" />
+          <input type="text" id="attendanceSearch" class="admin-input" placeholder="Search recruit..." oninput="renderAttendanceTable()" />
+          <select id="attendanceStatusFilter" class="admin-input" onchange="renderAttendanceTable()">
+            <option value="ALL">All Statuses</option>
+            <option value="CHECKED_IN">Checked In</option>
+            <option value="CHECKED_OUT">Checked Out</option>
+            <option value="NOT_CHECKED_IN">Not Checked In</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="panel-body p-0">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Recruit Name</th>
+                <th>Role / Designation</th>
+                <th>Duty Status</th>
+                <th>Check In Time</th>
+                <th>Check Out Time</th>
+                <th>Hours Logged</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attendanceTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3️⃣ WORK PROTOCOL REPORTS AUDIT -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <i class="bi bi-journal-text text-warning"></i> Master Work Protocol Audit
+          <span id="auditReportCount" class="badge bg-warning-subtle text-warning rounded-pill px-3 ms-2" style="font-size: 11px;">0 Logged</span>
+        </h2>
+        <input type="text" id="workReportSearch" class="admin-input" placeholder="Search report content..." oninput="renderWorkReportsTable()" />
+      </div>
+
+      <div class="panel-body p-0">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Recruit Name</th>
+                <th>Protocol Title</th>
+                <th>Achievements Log</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="workReportsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4️⃣ MASTER WEEKLY SKILLS & PROJECT AUDIT -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <i class="bi bi-calendar-range text-purple"></i> Master Weekly Reports Audit
+          <span id="auditWeeklyCount" class="badge bg-purple-subtle text-purple rounded-pill px-3 ms-2" style="font-size: 11px;">0 Logged</span>
+        </h2>
+        <input type="text" id="weeklyReportSearch" class="admin-input" placeholder="Search weekly report..." oninput="renderWeeklyReportsTable()" />
+      </div>
+
+      <div class="panel-body p-0">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Submission Date</th>
+                <th>Recruit Name & Email</th>
+                <th>Skills & Concepts Learned</th>
+                <th>Project Progress & Deliverables</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="weeklyReportsTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4️⃣ RECRUIT ROSTER DIRECTORY -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">
+          <i class="bi bi-person-lines-fill" style="color: var(--purple-accent);"></i> Recruit Roster Directory
+        </h2>
+        <button class="btn btn-sm btn-primary rounded-pill px-3 fw-bold" onclick="openRegisterModal()">
+          <i class="bi bi-person-plus me-1"></i> Register New Member
+        </button>
+      </div>
+
+      <div class="panel-body p-0">
+        <div class="table-responsive">
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Recruit ID</th>
+                <th>Member Name</th>
+                <th>PRN</th>
+                <th>Year</th>
+                <th>Domain</th>
+                <th>Mobile</th>
+                <th>Email Address</th>
+                <th>Role / Title</th>
+                <th>Password</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recruitRosterBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5️⃣ GEOFENCE & LOCATION SECURITY CONTROL -->
+    <div class="panel mt-4">
+      <div class="panel-header d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="panel-title mb-0">
+            <i class="bi bi-geo-alt-fill text-danger me-2"></i> Campus Geofence & Location Control
+          </h2>
+          <div class="small text-muted mt-1">Set mandatory GPS location boundaries for recruit check-ins</div>
+        </div>
+        <div class="form-check form-switch fs-5">
+          <input class="form-check-input" type="checkbox" id="geofenceToggle" onchange="toggleGeofenceEnabled()" checked />
+          <label class="form-check-label small fw-bold text-muted ms-2" for="geofenceToggle" id="geofenceToggleLabel" style="font-size: 13px;">GEOFENCE ACTIVE</label>
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <form id="geofenceForm" onsubmit="saveGeofenceSettings(event)">
+          <div class="row g-3">
+            <div class="col-12 col-md-6">
+              <label class="form-label small text-uppercase fw-bold text-muted">Target Location Name</label>
+              <input type="text" id="geoLocName" class="admin-input w-100" placeholder="e.g. Sun Nexus Main Campus HQ" value="Sun Nexus Main Campus HQ" required />
+            </div>
+
+            <div class="col-12 col-md-3">
+              <label class="form-label small text-uppercase fw-bold text-muted">Latitude</label>
+              <input type="number" step="any" id="geoLat" class="admin-input w-100 font-monospace" placeholder="18.5204" value="18.5204" required />
+            </div>
+
+            <div class="col-12 col-md-3">
+              <label class="form-label small text-uppercase fw-bold text-muted">Longitude</label>
+              <input type="number" step="any" id="geoLng" class="admin-input w-100 font-monospace" placeholder="73.8567" value="73.8567" required />
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-uppercase fw-bold text-muted">Allowed Radius (Meters)</label>
+              <select id="geoRadius" class="admin-input w-100">
+                <option value="50">50 Meters (Strict Building Only)</option>
+                <option value="100">100 Meters (Lab & Courtyard)</option>
+                <option value="300" selected>300 Meters (Full Campus Area)</option>
+                <option value="500">500 Meters (Extended Campus)</option>
+                <option value="1000">1000 Meters (1 KM Radius)</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-8 d-flex align-items-end gap-2 flex-wrap">
+              <button type="button" class="btn btn-sm btn-outline-info rounded-pill px-3 py-2 fw-bold" onclick="setAdminCurrentLocation()">
+                <i class="bi bi-crosshair me-1"></i> Use My Current GPS Location
+              </button>
+              <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 py-2 fw-bold ms-auto">
+                <i class="bi bi-shield-check me-1"></i> Save Geofence Boundary
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- View Work Report Modal -->
+    <div class="modal fade" id="viewReportModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: var(--bg-panel); color: var(--text-main); border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+          <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding: 20px 24px;">
+            <div class="d-flex align-items-center gap-3">
+              <div class="p-2 rounded-circle bg-warning-subtle text-warning" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                <i class="bi bi-journal-text"></i>
+              </div>
+              <div>
+                <h5 class="modal-title fw-bold mb-0" id="modalReportTitle">Daily Protocol Report</h5>
+                <div class="small text-muted" id="modalReportSub">Submitted by <strong id="modalReportName">--</strong> (<span id="modalReportEmail">--</span>)</div>
+              </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-3 border-bottom">
+              <div>
+                <span class="text-muted small text-uppercase fw-bold">Submission Timestamp:</span>
+                <div class="fw-bold text-primary font-monospace" id="modalReportDate">--</div>
+              </div>
+              <div>
+                <span class="text-muted small text-uppercase fw-bold me-2">Verification Status:</span>
+                <span id="modalReportStatus" class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill">
+                  <i class="bi bi-check-all me-1"></i> VERIFIED
+                </span>
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small text-uppercase fw-bold text-muted">Full Engineering Protocol Log:</label>
+              <div id="modalReportDetails" class="p-3 rounded-3 font-monospace" style="background: var(--bg-app); border: 1px solid var(--border-color); white-space: pre-wrap; font-size: 13.5px; line-height: 1.6; min-height: 140px; color: var(--text-main);">
+                --
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 16px 24px;">
+            <button type="button" id="modalToggleVerifyBtn" class="btn btn-sm btn-outline-success rounded-pill px-3 fw-bold">
+              <i class="bi bi-patch-check"></i> Toggle Status
+            </button>
+            <button type="button" class="btn btn-sm btn-secondary rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Weekly Report Modal -->
+    <div class="modal fade" id="viewWeeklyModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content" style="background: var(--bg-panel); color: var(--text-main); border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+          <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding: 20px 24px;">
+            <div class="d-flex align-items-center gap-3">
+              <div class="p-2 rounded-circle bg-purple-subtle text-purple" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+                <i class="bi bi-calendar-range"></i>
+              </div>
+              <div>
+                <h5 class="modal-title fw-bold mb-0">Weekly Skills & Project Audit</h5>
+                <div class="small text-muted">Submitted by <strong id="modalWeeklyName">--</strong> (<span id="modalWeeklyEmail">--</span>)</div>
+              </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body p-4">
+            <div class="mb-3 pb-3 border-bottom">
+              <span class="text-muted small text-uppercase fw-bold">Submission Timestamp:</span>
+              <div class="fw-bold text-purple font-monospace" id="modalWeeklyDate">--</div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label small text-uppercase fw-bold text-muted">1. Skills & Technologies Learned:</label>
+              <div id="modalWeeklySkills" class="p-3 rounded-3 font-monospace" style="background: var(--bg-app); border: 1px solid var(--border-color); white-space: pre-wrap; font-size: 13.5px; line-height: 1.6; color: var(--text-main);">
+                --
+              </div>
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label small text-uppercase fw-bold text-muted">2. Project Progress & Key Accomplishments:</label>
+              <div id="modalWeeklyUpdates" class="p-3 rounded-3 font-monospace" style="background: var(--bg-app); border: 1px solid var(--border-color); white-space: pre-wrap; font-size: 13.5px; line-height: 1.6; color: var(--text-main);">
+                --
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 16px 24px;">
+            <button type="button" class="btn btn-sm btn-secondary rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Toast Notification -->
+  <div id="toastMessage">
+    <i class="bi bi-info-circle-fill text-info fs-5"></i>
+    <span id="toastText">Operation completed successfully.</span>
+  </div>
+
+  <script>
+    const USERS_KEY = 'rlb_users_v1';
+    const SESSION_KEY = 'rlb_session_v1';
+    const GLOBAL_LOGS_KEY = 'rlb_global_logs_v1';
+
+    // Default system state
+    let usersData = [];
+    let globalLogs = {
+      attendance: [],
+      workReports: [],
+      weeklyUpdates: []
+    };
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Session & Admin Role Guard
+      const sessionRaw = localStorage.getItem(SESSION_KEY);
+      if (!sessionRaw) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const session = JSON.parse(sessionRaw);
+      const isAdmin = (session.role && session.role.toLowerCase().includes('admin')) || (session.email && session.email.toLowerCase().includes('admin'));
+
+      if (!isAdmin) {
+        alert('Access Denied: You do not have Executive Admin privileges.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      document.getElementById('navAdminName').innerText = session.name || 'Executive Admin';
+      
+      const adminPicker = document.getElementById('adminMonthPicker');
+      if (adminPicker && !adminPicker.value) {
+        adminPicker.value = new Date().toISOString().slice(0, 7);
+      }
+      
+      const adminCredModalEl = document.getElementById('changeAdminCredentialsModal');
+      if (adminCredModalEl) {
+        adminCredModalEl.addEventListener('show.bs.modal', () => {
+          const currentSessionRaw = localStorage.getItem(SESSION_KEY);
+          if (currentSessionRaw) {
+            const currentSession = JSON.parse(currentSessionRaw);
+            document.getElementById('adminEmailInput').value = currentSession.email || 'admin@sunnexus.com';
+          }
+          document.getElementById('adminPasswordInput').value = '';
+        });
+      }
+
+      loadAdminData();
+    });
+
+    async function loadAdminData() {
+      // ── 🐘 Try Neon Database API first ──
+      try {
+        const [usersRes, logsRes] = await Promise.all([
+          fetch('/api/users'),
+          fetch('/api/logs')
+        ]);
+
+        if (usersRes.ok && logsRes.ok) {
+          const usersJson = await usersRes.json();
+          const logsJson  = await logsRes.json();
+
+          // Map Neon DB rows to the shape the UI expects
+          usersData = usersJson.map(u => ({
+            id:        u.reg_id || u.id,
+            name:      u.name,
+            email:     u.email,
+            prn:       u.prn,
+            year:      u.academic_year,
+            domain:    u.domain,
+            mobile:    u.mobile,
+            role:      u.role,
+            password:  u.password || u.password_hash,
+            joinedAt:  u.joined_at || u.created_at,
+            _dbId:     u.id
+          }));
+
+          globalLogs = {
+            attendance: (logsJson.attendance || []).map(a => ({
+              id:       a.id,
+              name:     a.name,
+              email:    a.email,
+              date:     a.date,
+              status:   a.status,
+              checkIn:  a.checkIn  || a.check_in_time  || '--',
+              checkOut: a.checkOut || a.check_out_time || '--',
+              hours:    a.hoursLogged || a.hours_logged || 'Active'
+            })),
+            workReports: (logsJson.workReports || []).map(r => ({
+              id:      r.id,
+              name:    r.name,
+              email:   r.email,
+              date:    r.date,
+              title:   r.title  || 'Daily Operations Protocol',
+              details: r.details,
+              status:  r.status || 'VERIFIED'
+            })),
+            weeklyUpdates: (logsJson.weeklyUpdates || []).map(w => ({
+              id:      w.id,
+              name:    w.name,
+              email:   w.email,
+              date:    w.date,
+              skills:  w.skills  || w.skills_learned  || '',
+              updates: w.updates || w.project_updates || ''
+            }))
+          };
+
+          // Mirror to localStorage so offline still works
+          localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+          localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+
+          setDataSourceBadge('neon');
+          refreshAdminUI();
+          return;
+        }
+      } catch (networkErr) {
+        console.warn('⚠️ Neon API unreachable — falling back to localStorage:', networkErr);
+      }
+
+      // ── 📦 localStorage Fallback ──
+      try {
+        const rawUsers = localStorage.getItem(USERS_KEY);
+        usersData = rawUsers ? JSON.parse(rawUsers) : [];
+      } catch (e) { usersData = []; }
+
+      if (!usersData.some(u => u.email === 'admin@sunnexus.com')) {
+        usersData.unshift({
+          id: 'ADM-001', name: 'Executive Admin',
+          email: 'admin@sunnexus.com', role: 'Lead Operations Admin',
+          password: 'admin123', joinedAt: new Date().toISOString()
+        });
+        localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+      }
+
+      try {
+        const savedLogs = localStorage.getItem(GLOBAL_LOGS_KEY);
+        globalLogs = savedLogs ? JSON.parse(savedLogs) : { attendance: [], workReports: [], weeklyUpdates: [] };
+      } catch (e) {
+        globalLogs = { attendance: [], workReports: [], weeklyUpdates: [] };
+      }
+
+      setDataSourceBadge('local');
+      await loadGeofenceSettings();
+      refreshAdminUI();
+    }
+
+    // ── 🌐 GEOFENCE LOCATION CONTROL ──
+    const GEOFENCE_KEY = 'rlb_geofence_v1';
+    let geofenceSettings = {
+      enabled: true,
+      locationName: 'Sun Nexus Main Campus HQ',
+      latitude: 18.5204,
+      longitude: 73.8567,
+      radiusMeters: 300,
+      allowFallback: false
+    };
+
+    async function loadGeofenceSettings() {
+      // 1. Try Neon API first
+      try {
+        const res = await fetch('/api/config/geofence');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.geofence) {
+            geofenceSettings = data.geofence;
+            localStorage.setItem(GEOFENCE_KEY, JSON.stringify(geofenceSettings));
+          }
+        }
+      } catch (err) {
+        console.warn('⚠️ Neon Geofence API offline — fallback to LocalStorage:', err);
+      }
+
+      // 2. Fallback to LocalStorage
+      const localGeo = localStorage.getItem(GEOFENCE_KEY);
+      if (localGeo) {
+        try { geofenceSettings = Object.assign({}, geofenceSettings, JSON.parse(localGeo)); } catch(e){}
+      }
+
+      // 3. Update Admin UI inputs
+      const toggle = document.getElementById('geofenceToggle');
+      const label = document.getElementById('geofenceToggleLabel');
+      if (toggle) {
+        toggle.checked = Boolean(geofenceSettings.enabled);
+        if (label) label.innerText = geofenceSettings.enabled ? 'GEOFENCE ACTIVE' : 'GEOFENCE DISABLED';
+      }
+      if (document.getElementById('geoLocName')) document.getElementById('geoLocName').value = geofenceSettings.locationName || 'Sun Nexus Main Campus HQ';
+      if (document.getElementById('geoLat')) document.getElementById('geoLat').value = geofenceSettings.latitude || 18.5204;
+      if (document.getElementById('geoLng')) document.getElementById('geoLng').value = geofenceSettings.longitude || 73.8567;
+      if (document.getElementById('geoRadius')) document.getElementById('geoRadius').value = geofenceSettings.radiusMeters || 300;
+    }
+
+    async function saveGeofenceSettings(e) {
+      if (e) e.preventDefault();
+      geofenceSettings.locationName = document.getElementById('geoLocName').value.trim() || 'Campus HQ';
+      geofenceSettings.latitude = parseFloat(document.getElementById('geoLat').value) || 18.5204;
+      geofenceSettings.longitude = parseFloat(document.getElementById('geoLng').value) || 73.8567;
+      geofenceSettings.radiusMeters = parseInt(document.getElementById('geoRadius').value) || 300;
+      geofenceSettings.enabled = document.getElementById('geofenceToggle').checked;
+
+      localStorage.setItem(GEOFENCE_KEY, JSON.stringify(geofenceSettings));
+
+      try {
+        await fetch('/api/config/geofence', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(geofenceSettings)
+        });
+      } catch(e) {}
+
+      showToast(`🎯 Geofence set to [${geofenceSettings.locationName}] (${geofenceSettings.radiusMeters}m radius)!`);
+    }
+
+    function toggleGeofenceEnabled() {
+      const isChecked = document.getElementById('geofenceToggle').checked;
+      geofenceSettings.enabled = isChecked;
+      const label = document.getElementById('geofenceToggleLabel');
+      if (label) label.innerText = isChecked ? 'GEOFENCE ACTIVE' : 'GEOFENCE DISABLED';
+      localStorage.setItem(GEOFENCE_KEY, JSON.stringify(geofenceSettings));
+
+      try {
+        fetch('/api/config/geofence', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ enabled: isChecked })
+        });
+      } catch(e) {}
+
+      showToast(isChecked ? '🛡️ Campus Geofence Check-in ENABLED!' : '⚠️ Campus Geofence Check-in DISABLED (Global Access)');
+    }
+
+    function setAdminCurrentLocation() {
+      if (!navigator.geolocation) {
+        showToast('⚠️ Geolocation is not supported by your browser.');
+        return;
+      }
+      showToast('📡 Fetching your current GPS coordinates...');
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById('geoLat').value = pos.coords.latitude.toFixed(6);
+          document.getElementById('geoLng').value = pos.coords.longitude.toFixed(6);
+          showToast(`📍 Acquired GPS Location: ${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`);
+        },
+        (err) => {
+          showToast(`⚠️ Location Access Denied: ${err.message}`);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    function setDataSourceBadge(source) {
+      const badge = document.getElementById('dataSourceBadge');
+      if (!badge) return;
+      if (source === 'neon') {
+        badge.innerHTML = '<i class="bi bi-database-fill-check me-1"></i>Neon DB Live';
+        badge.className = 'badge rounded-pill px-3 py-2 fw-bold';
+        badge.style.cssText = 'background: rgba(52,211,153,0.15); color: #34d399; border: 1px solid rgba(52,211,153,0.3); font-size: 11px;';
+      } else {
+        badge.innerHTML = '<i class="bi bi-hdd me-1"></i>LocalStorage';
+        badge.className = 'badge rounded-pill px-3 py-2 fw-bold';
+        badge.style.cssText = 'background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); font-size: 11px;';
+      }
+    }
+
+    async function refreshAdminData() {
+      await loadAdminData();
+      showToast('🔄 Admin Command Center synced with Neon Database!');
+    }
+
+    function refreshAdminUI() {
+      renderMetrics();
+      renderAttendanceTable();
+      renderWorkReportsTable();
+      renderWeeklyReportsTable();
+      renderRosterTable();
+      renderAdminNotifications();
+    }
+
+    function refreshAdminData() {
+      loadAdminData();
+      showToast('🔄 Admin Command Center data refreshed live!');
+    }
+
+    // ── 1️⃣ METRICS CALCULATION ──
+    function renderMetrics() {
+      const recruitsOnly = usersData.filter(u => u.email !== 'admin@sunnexus.com' && (!u.role || !u.role.toLowerCase().includes('admin')));
+      document.getElementById('statTotalRecruits').innerText = recruitsOnly.length;
+
+      const checkedInCount = globalLogs.attendance.filter(a => a.status === 'CHECKED_IN').length;
+      document.getElementById('statCheckedIn').innerText = checkedInCount;
+
+      const todayStr = new Date().toISOString().split('T')[0];
+      const todayReportsCount = globalLogs.workReports.filter(r => r.date && r.date.startsWith(todayStr)).length;
+      document.getElementById('statWorkReports').innerText = globalLogs.workReports.length;
+
+      const totalLogs = globalLogs.attendance.length;
+      const presentLogs = globalLogs.attendance.filter(a => a.status === 'CHECKED_IN' || a.status === 'CHECKED_OUT').length;
+      const rate = totalLogs > 0 ? Math.round((presentLogs / totalLogs) * 100) : 0;
+      document.getElementById('statAttendanceRate').innerText = `${rate}%`;
+    }
+
+    // ── 2️⃣ LIVE ATTENDANCE MONITOR ──
+    function renderAttendanceTable() {
+      const tbody = document.getElementById('attendanceTableBody');
+      const search = document.getElementById('attendanceSearch').value.toLowerCase();
+      const filter = document.getElementById('attendanceStatusFilter').value;
+
+      tbody.innerHTML = '';
+
+      const recruitsOnly = usersData.filter(u => u.email !== 'admin@sunnexus.com' && (!u.role || !u.role.toLowerCase().includes('admin')));
+
+      if (recruitsOnly.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-4">No recruits registered.</td></tr>`;
+        return;
+      }
+
+      recruitsOnly.forEach(user => {
+        if (search && !user.name.toLowerCase().includes(search) && !user.email.toLowerCase().includes(search)) {
+          return;
+        }
+
+        // Find recruit latest attendance
+        const userAtt = globalLogs.attendance.find(a => a.email === user.email) || {
+          status: 'NOT_CHECKED_IN',
+          checkIn: '--:--',
+          checkOut: '--:--',
+          hours: '0h'
+        };
+
+        if (filter !== 'ALL' && userAtt.status !== filter) {
+          return;
+        }
+
+        let statusBadge = '<span class="status-pill offline"><i class="bi bi-circle-fill"></i> Offline</span>';
+        if (userAtt.status === 'CHECKED_IN') {
+          statusBadge = '<span class="status-pill active"><i class="bi bi-broadcast"></i> Checked In</span>';
+        } else if (userAtt.status === 'CHECKED_OUT') {
+          statusBadge = '<span class="status-pill checked-out"><i class="bi bi-check2-circle"></i> Checked Out</span>';
+        }
+
+        // Calculate dynamic live logged hours if checked in
+        let displayHours = userAtt.hours || '0h';
+        if (userAtt.status === 'CHECKED_IN') {
+          const checkInTimeObj = userAtt.date ? new Date(userAtt.date) : new Date();
+          const diffMs = Math.max(0, new Date() - checkInTimeObj);
+          const hrs = Math.floor(diffMs / 3600000);
+          const mins = Math.floor((diffMs % 3600000) / 60000);
+          displayHours = hrs > 0 ? `${hrs}h ${mins}m (Active)` : `${mins}m (Active)`;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <div class="p-2 rounded-circle bg-primary-light text-primary fw-bold" style="width:34px; height:34px; display:flex; align-items:center; justify-content:center; font-size:12px;">
+                ${user.name.charAt(0)}
+              </div>
+              <div>
+                <div class="fw-bold">${user.name}</div>
+                <div class="small text-muted" style="font-size:11px;">${user.email}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge bg-secondary-subtle text-muted px-2 py-1">${user.role || 'Member'}</span></td>
+          <td>${statusBadge}</td>
+          <td class="fw-semibold text-main">${userAtt.checkIn || '--:--'}</td>
+          <td class="fw-semibold text-muted">${userAtt.checkOut || '--:--'}</td>
+          <td><span class="badge bg-primary-light text-primary rounded-pill px-3">${displayHours}</span></td>
+          <td>
+            <div class="d-flex align-items-center gap-1">
+              ${userAtt.status !== 'CHECKED_IN' ? 
+                `<button class="btn btn-sm btn-outline-success rounded-pill px-2 py-0" style="font-size:11px;" title="Force Check In" onclick="adminForceCheckIn('${user.email}')"><i class="bi bi-box-arrow-in-right"></i> In</button>` :
+                `<button class="btn btn-sm btn-outline-warning rounded-pill px-2 py-0" style="font-size:11px;" title="Force Check Out" onclick="adminForceCheckOut('${user.email}')"><i class="bi bi-box-arrow-right"></i> Out</button>`
+              }
+              <button class="btn btn-sm btn-outline-info rounded-pill px-2 py-0" style="font-size:11px;" title="Audit Logs" onclick="viewRecruitLogs('${user.email}')"><i class="bi bi-eye"></i> Audit</button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ── 3️⃣ MASTER WORK PROTOCOL AUDIT ──
+    function renderWorkReportsTable() {
+      const tbody = document.getElementById('workReportsTableBody');
+      const search = document.getElementById('workReportSearch').value.toLowerCase();
+
+      tbody.innerHTML = '';
+      document.getElementById('auditReportCount').innerText = `${globalLogs.workReports.length} Logged`;
+
+      if (globalLogs.workReports.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">No daily work reports logged yet.</td></tr>`;
+        return;
+      }
+
+      globalLogs.workReports.forEach((report, index) => {
+        if (search && !report.name.toLowerCase().includes(search) && !report.details.toLowerCase().includes(search) && !report.email.toLowerCase().includes(search)) {
+          return;
+        }
+
+        const isVerified = report.status === 'VERIFIED';
+        const statusBadge = isVerified ? 
+          `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold" style="cursor:pointer;" onclick="toggleReportStatus(${index})"><i class="bi bi-check-all me-1"></i> VERIFIED</span>` :
+          `<span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-bold" style="cursor:pointer;" onclick="toggleReportStatus(${index})"><i class="bi bi-hourglass-split me-1"></i> PENDING</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="fw-bold text-muted" style="font-size:12px;">${report.date}</td>
+          <td><span class="fw-bold text-main">${report.name}</span></td>
+          <td><span class="badge bg-primary-light text-primary rounded-pill px-3 py-1">${report.title || 'Daily Protocol'}</span></td>
+          <td style="max-width: 400px; line-height: 1.5;" class="text-truncate">
+            ${report.details}
+          </td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              ${statusBadge}
+              <button class="btn btn-sm btn-outline-info rounded-circle p-0" style="width:26px; height:26px;" title="View Full Report" onclick="openReportModal(${index})"><i class="bi bi-arrows-angle-expand"></i></button>
+              <button class="btn btn-sm btn-outline-danger rounded-circle p-0" style="width:26px; height:26px;" title="Delete Report" onclick="deleteWorkReport(${index})"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function toggleReportStatus(index) {
+      const report = globalLogs.workReports[index];
+      if (!report) return;
+
+      const newStatus = report.status === 'VERIFIED' ? 'PENDING' : 'VERIFIED';
+      report.status = newStatus;
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+
+      if (report.id) {
+        try {
+          await fetch(`/api/reports/daily/${report.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+        } catch (err) {
+          console.warn('⚠️ Neon report verification update failed:', err);
+        }
+      }
+
+      renderWorkReportsTable();
+      showToast(newStatus === 'VERIFIED' ? `✅ Work Protocol for ${report.name} marked VERIFIED!` : `⏳ Work Protocol marked PENDING.`);
+    }
+
+    // ── 3.5️⃣ MASTER WEEKLY SKILLS & PROJECT AUDIT ──
+    function renderWeeklyReportsTable() {
+      const tbody = document.getElementById('weeklyReportsTableBody');
+      if (!tbody) return;
+      const search = (document.getElementById('weeklyReportSearch')?.value || '').toLowerCase();
+
+      tbody.innerHTML = '';
+      const list = globalLogs.weeklyUpdates || [];
+      const countEl = document.getElementById('auditWeeklyCount');
+      if (countEl) countEl.innerText = `${list.length} Logged`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-4">No weekly skills & project reports logged yet.</td></tr>`;
+        return;
+      }
+
+      list.forEach((report, index) => {
+        if (search && !report.name.toLowerCase().includes(search) && !(report.skills||'').toLowerCase().includes(search) && !(report.updates||'').toLowerCase().includes(search) && !report.email.toLowerCase().includes(search)) {
+          return;
+        }
+
+        const isVerified = report.status === 'VERIFIED';
+        const statusBadge = isVerified ? 
+          `<span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fw-bold" style="cursor:pointer;" onclick="toggleWeeklyReportStatus(${index})"><i class="bi bi-check-all me-1"></i> VERIFIED</span>` :
+          `<span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-1 fw-bold" style="cursor:pointer;" onclick="toggleWeeklyReportStatus(${index})"><i class="bi bi-hourglass-split me-1"></i> PENDING</span>`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="fw-bold text-muted" style="font-size:12px;">${report.date}</td>
+          <td>
+            <div class="fw-bold text-main">${report.name}</div>
+            <div class="small text-muted" style="font-size:11px;">${report.email}</div>
+          </td>
+          <td style="max-width: 300px; line-height: 1.5; white-space: pre-wrap;" class="small">${report.skills || '<em>None logged</em>'}</td>
+          <td style="max-width: 300px; line-height: 1.5; white-space: pre-wrap;" class="small">${report.updates || '<em>None logged</em>'}</td>
+          <td>${statusBadge}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-outline-danger rounded-circle p-0" style="width:26px; height:26px;" title="Delete Report" onclick="deleteWeeklyReport(${index})"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function toggleWeeklyReportStatus(index) {
+      const report = (globalLogs.weeklyUpdates || [])[index];
+      if (!report) return;
+
+      const newStatus = report.status === 'VERIFIED' ? 'PENDING' : 'VERIFIED';
+      report.status = newStatus;
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+
+      if (report.id) {
+        try {
+          await fetch(`/api/reports/weekly/${report.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+        } catch (err) {
+          console.warn('⚠️ Neon weekly report verification update failed:', err);
+        }
+      }
+
+      renderWeeklyReportsTable();
+      showToast(newStatus === 'VERIFIED' ? `✅ Weekly Report for ${report.name} marked VERIFIED!` : `⏳ Weekly Report marked PENDING.`);
+    }
+
+    async function deleteWeeklyReport(index) {
+      const report = (globalLogs.weeklyUpdates || [])[index];
+      if (!report) return;
+
+      if (confirm(`Delete weekly report for ${report.name}?`)) {
+        if (report.id) {
+          try {
+            await fetch(`/api/reports/weekly/${report.id}`, { method: 'DELETE' });
+          } catch(e){}
+        }
+        globalLogs.weeklyUpdates.splice(index, 1);
+        localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+        renderWeeklyReportsTable();
+        showToast('🗑️ Weekly report deleted.');
+      }
+    }
+
+    // ── 4️⃣ RECRUIT ROSTER DIRECTORY ──
+    function renderRosterTable() {
+      const tbody = document.getElementById('recruitRosterBody');
+      tbody.innerHTML = '';
+
+      if (usersData.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10" class="text-center text-muted py-4">No users registered yet.</td></tr>`;
+        return;
+      }
+
+      usersData.forEach((user, index) => {
+        const passwordDisplay = user.password ? `<code>${user.password}</code>` : '<span class="text-muted small">Not set</span>';
+        const recruitId = user.id || `REC-${100 + index}`;
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><span class="badge bg-primary-subtle text-primary border border-primary-subtle font-monospace px-2 py-1">${recruitId}</span></td>
+          <td>
+            <div class="fw-bold">${user.name}</div>
+          </td>
+          <td class="font-monospace text-muted small">${user.prn || 'N/A'}</td>
+          <td><span class="badge bg-secondary-subtle text-body">${user.year || '2nd Year'}</span></td>
+          <td><span class="badge bg-info-subtle text-info-emphasis">${user.domain || 'Software'}</span></td>
+          <td class="text-muted small">${user.mobile || 'N/A'}</td>
+          <td class="text-muted small">${user.email}</td>
+          <td><span class="badge rounded-pill px-3 py-1" style="background: rgba(167, 139, 250, 0.15); color: var(--purple-accent);">${user.role || 'Member'}</span></td>
+          <td>${passwordDisplay}</td>
+          <td>
+            <div class="d-flex align-items-center gap-1">
+              <button class="btn btn-sm btn-outline-warning rounded-circle p-1" style="width:28px; height:28px;" title="Edit ID" onclick="editRecruitId(${index})">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-info rounded-circle p-1" style="width:28px; height:28px;" title="Reset Password" onclick="resetRecruitPassword(${index})">
+                <i class="bi bi-key"></i>
+              </button>
+              <button class="btn btn-sm btn-outline-danger rounded-circle p-1" style="width:28px; height:28px;" title="Remove Recruit" onclick="removeRecruit(${index})">
+                <i class="bi bi-trash"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ── CLEAR DEMO DATA & DEMO SEEDING ──
+    function clearDemoData() {
+      if (confirm('🧹 Clear all demo attendance records, work protocols, and test recruits?')) {
+        globalLogs = { attendance: [], workReports: [], weeklyUpdates: [] };
+        localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+
+        usersData = [
+          { id: 'ADM-001', name: 'Executive Admin', email: 'admin@sunnexus.com', role: 'Lead Operations Admin', password: 'admin123', joinedAt: new Date().toISOString() }
+        ];
+        localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+
+        refreshAdminUI();
+        showToast('🧹 Demo data cleared successfully!');
+      }
+    }
+
+    function seedSampleData() {
+      globalLogs = {
+        attendance: [
+          { name: 'Alex Vance', email: 'alex@sunnexus.com', status: 'CHECKED_IN', checkIn: '08:55 AM', checkOut: '--:--', hours: 'Active' },
+          { name: 'Sarah Chen', email: 'sarah@sunnexus.com', status: 'CHECKED_OUT', checkIn: '09:00 AM', checkOut: '05:30 PM', hours: '8h 30m' }
+        ],
+        workReports: [
+          { name: 'Alex Vance', email: 'alex@sunnexus.com', date: new Date().toISOString().slice(0, 10) + ' 09:15', title: 'API Telemetry & Auth Sync', details: 'Integrated central localStorage state syncing between Member Console and Admin Command Center.' },
+          { name: 'Sarah Chen', email: 'sarah@sunnexus.com', date: new Date().toISOString().slice(0, 10) + ' 17:30', title: 'UI Glassmorphism Theme Refactor', details: 'Synced color CSS tokens (#111827 background & cyan/purple highlights) across admin layout.' }
+        ],
+        weeklyUpdates: []
+      };
+
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+      refreshAdminUI();
+      showToast('🚀 Demo telemetry & work protocol logs seeded successfully!');
+    }
+
+    async function removeRecruit(index) {
+      const user = usersData[index];
+      if (!user) return;
+
+      if (confirm(`Remove ${user.name} from roster?`)) {
+        if (user._dbId) {
+          try {
+            const res = await fetch(`/api/users/${user._dbId}`, {
+              method: 'DELETE'
+            });
+            if (res.ok) {
+              usersData.splice(index, 1);
+              localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+              refreshAdminUI();
+              showToast(`🗑️ Removed ${user.name} from Neon DB roster.`);
+              return;
+            }
+          } catch (err) {
+            console.warn('⚠️ Neon DELETE failed:', err);
+          }
+        }
+
+        // Local fallback
+        usersData.splice(index, 1);
+        localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+        refreshAdminUI();
+        showToast('Recruit removed from roster.');
+      }
+    }
+
+    function openRegisterModal() {
+      const nextNum = 101 + usersData.length;
+      document.getElementById('regId').value = `REC-${nextNum}`;
+      
+      const modalEl = document.getElementById('registerModal');
+      modalEl.classList.add('show');
+      modalEl.style.display = 'block';
+      document.body.classList.add('modal-open');
+    }
+
+    function closeRegisterModal() {
+      const modalEl = document.getElementById('registerModal');
+      modalEl.classList.remove('show');
+      modalEl.style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
+
+    async function handleAdminRegisterMember(event) {
+      event.preventDefault();
+      const id = document.getElementById('regId').value.trim();
+      const name = document.getElementById('regName').value.trim();
+      const prn = document.getElementById('regPrn').value.trim();
+      const year = document.getElementById('regYear').value;
+      const domain = document.getElementById('regDomain').value.trim();
+      const mobile = document.getElementById('regMobile').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const role = document.getElementById('regRole').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+
+      if (!name || !email || !password || !prn) {
+        showToast('⚠️ Name, PRN, Email, and Password are required!');
+        return;
+      }
+
+      if (usersData.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+        showToast('⚠️ A member with this email address is already registered!');
+        return;
+      }
+
+      // Try Neon DB API Register first
+      try {
+        const res = await fetch('/api/users/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            regId: id,
+            name,
+            prn,
+            academicYear: year,
+            domain,
+            mobile,
+            email,
+            role,
+            password
+          })
+        });
+
+        if (res.ok) {
+          closeRegisterModal();
+          document.getElementById('registerMemberForm').reset();
+          await loadAdminData();
+          showToast(`✅ Member ${name} registered in Neon Database!`);
+          return;
+        } else {
+          const err = await res.json();
+          showToast(`❌ DB Error: ${err.error}`);
+          return;
+        }
+      } catch (err) {
+        console.warn('⚠️ Neon API register failed — saving locally:', err);
+      }
+
+      // Local storage fallback
+      usersData.push({
+        id: id || `REC-${101 + usersData.length}`,
+        name,
+        prn: prn || 'N/A',
+        year: year || '2nd Year',
+        domain: domain || 'General',
+        mobile: mobile || 'N/A',
+        email,
+        role: role || 'Member Engineer',
+        password: password || 'recruit123',
+        joinedAt: new Date().toISOString()
+      });
+
+      localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+      
+      closeRegisterModal();
+      document.getElementById('registerMemberForm').reset();
+      refreshAdminUI();
+      showToast(`✅ Member ${name} registered locally (offline mode).`);
+    }
+
+    function editRecruitId(index) {
+      const user = usersData[index];
+      const newId = prompt(`Enter new Recruit ID for ${user.name}:`, user.id || `REC-${100 + index}`);
+      if (newId && newId.trim()) {
+        user.id = newId.trim();
+        localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+        refreshAdminUI();
+        showToast(`Updated Recruit ID for ${user.name} to [${user.id}]`);
+      }
+    }
+
+    function openChangeAdminCredentialsModal() {
+      const sessionRaw = localStorage.getItem(SESSION_KEY);
+      if (sessionRaw) {
+        const session = JSON.parse(sessionRaw);
+        document.getElementById('adminEmailInput').value = session.email || 'admin@sunnexus.com';
+      }
+      document.getElementById('adminPasswordInput').value = '';
+
+      const modalEl = document.getElementById('changeAdminCredentialsModal');
+      if (modalEl) {
+        modalEl.style.display = 'block';
+        modalEl.classList.add('show');
+        document.body.classList.add('modal-open');
+      }
+    }
+
+    function closeChangeAdminCredentialsModal() {
+      const modalEl = document.getElementById('changeAdminCredentialsModal');
+      if (modalEl) {
+        modalEl.style.display = 'none';
+        modalEl.classList.remove('show');
+        document.body.classList.remove('modal-open');
+      }
+    }
+
+    async function handleChangeAdminCredentials(e) {
+      e.preventDefault();
+      const sessionRaw = localStorage.getItem(SESSION_KEY);
+      if (!sessionRaw) return;
+      const session = JSON.parse(sessionRaw);
+
+      const adminUser = usersData.find(u =>
+        u.email === session.email ||
+        (u.role && u.role.toLowerCase().includes('admin')) ||
+        u.id === session.id ||
+        u.id === session.regId
+      );
+
+      const targetIdentifier = (adminUser && adminUser._dbId) ? adminUser._dbId : (session.email || session.id || 'admin@sunnexus.com');
+      const newEmail = document.getElementById('adminEmailInput').value.trim();
+      const newPassword = document.getElementById('adminPasswordInput').value.trim();
+
+      if (!newEmail || !newPassword) {
+        showToast('⚠️ Email and password are required!');
+        return;
+      }
+
+      let updatedInDb = false;
+      // Send update to Neon DB API
+      try {
+        const res = await fetch(`/api/users/${encodeURIComponent(targetIdentifier)}/credentials`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: newEmail, password: newPassword })
+        });
+
+        if (res.ok) {
+          updatedInDb = true;
+        } else {
+          console.warn('⚠️ Neon API credential patch response not ok:', res.status);
+        }
+      } catch (networkErr) {
+        console.warn('⚠️ Neon API update error:', networkErr);
+      }
+
+      // Update Session & Local Storage
+      session.email = newEmail;
+      localStorage.setItem(SESSION_KEY, JSON.stringify(session));
+
+      if (adminUser) {
+        adminUser.email = newEmail;
+        adminUser.password = newPassword;
+      }
+
+      const localUsersRaw = localStorage.getItem(USERS_KEY);
+      if (localUsersRaw) {
+        try {
+          let localUsers = JSON.parse(localUsersRaw);
+          const targetLocal = localUsers.find(u => u.email === session.email || (u.role && u.role.toLowerCase().includes('admin')));
+          if (targetLocal) {
+            targetLocal.email = newEmail;
+            targetLocal.password = newPassword;
+          } else {
+            localUsers.unshift({
+              id: 'ADM-001', name: 'Executive Admin', email: newEmail, password: newPassword, role: 'Lead Operations Admin'
+            });
+          }
+          localStorage.setItem(USERS_KEY, JSON.stringify(localUsers));
+        } catch (err) {}
+      }
+
+      closeChangeAdminCredentialsModal();
+      refreshAdminUI();
+
+      if (updatedInDb) {
+        showToast('🔑 Admin credentials updated successfully in Neon DB!');
+      } else {
+        showToast('🔑 Admin credentials updated locally.');
+      }
+    }
+
+    async function resetRecruitPassword(index) {
+      const user = usersData[index];
+      if (!user) return;
+      const targetId = user._dbId || user.id || user.email;
+      const newPw = prompt(`Enter new password for ${user.name}:`, user.password || 'recruit123');
+      if (newPw && newPw.trim()) {
+        try {
+          const res = await fetch(`/api/users/${encodeURIComponent(targetId)}/credentials`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: newPw.trim() })
+          });
+          if (res.ok) {
+            user.password = newPw.trim();
+            localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+            refreshAdminUI();
+            showToast(`🔑 Password updated for ${user.name} in Neon DB!`);
+            return;
+          }
+        } catch (err) {
+          console.warn('⚠️ Neon password patch error:', err);
+        }
+
+        user.password = newPw.trim();
+        localStorage.setItem(USERS_KEY, JSON.stringify(usersData));
+        refreshAdminUI();
+        showToast(`Password updated for ${user.name}`);
+      }
+    }
+
+    function viewRecruitLogs(email) {
+      document.getElementById('workReportSearch').value = email;
+      renderWorkReportsTable();
+      showToast(`Filtered audit logs for ${email}`);
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      
+      const icon = document.getElementById('themeIcon');
+      if (newTheme === 'light') {
+        icon.className = 'bi bi-sun-fill text-warning';
+      } else {
+        icon.className = 'bi bi-moon-stars';
+      }
+    }
+
+    // ── INTERACTIVE ADMIN ACTIONS ──
+    function adminForceCheckIn(email) {
+      const user = usersData.find(u => u.email === email);
+      if (!user) return;
+      
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const existingIdx = globalLogs.attendance.findIndex(a => a.email === email);
+      
+      const entry = {
+        name: user.name,
+        email: user.email,
+        status: 'CHECKED_IN',
+        checkIn: timeStr,
+        checkOut: '--:--',
+        hours: 'Active'
+      };
+
+      if (existingIdx >= 0) globalLogs.attendance[existingIdx] = entry;
+      else globalLogs.attendance.unshift(entry);
+
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+      refreshAdminUI();
+      showToast(`🟢 Forced Check In for ${user.name} at ${timeStr}`);
+    }
+
+    function adminForceCheckOut(email) {
+      const user = usersData.find(u => u.email === email);
+      if (!user) return;
+      
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const existing = globalLogs.attendance.find(a => a.email === email);
+
+      if (existing) {
+        existing.status = 'CHECKED_OUT';
+        existing.checkOut = timeStr;
+        existing.hours = '8h 30m';
+      }
+
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+      refreshAdminUI();
+      showToast(`🔴 Forced Check Out for ${user.name} at ${timeStr}`);
+    }
+
+    async function toggleReportStatus(index) {
+      const report = globalLogs.workReports[index];
+      if (!report) return;
+
+      const newStatus = (report.status === 'VERIFIED' || !report.status) ? 'PENDING' : 'VERIFIED';
+
+      // If we have database ID, update Neon DB
+      if (report.id) {
+        try {
+          const res = await fetch(`/api/reports/daily/${report.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: newStatus })
+          });
+          if (res.ok) {
+            report.status = newStatus;
+            localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+            renderWorkReportsTable();
+            showToast(`✅ Neon DB: Updated report status to ${newStatus}`);
+            return;
+          }
+        } catch (err) {
+          console.warn('⚠️ Neon PATCH failed — falling back to local state:', err);
+        }
+      }
+
+      // Local fallback
+      report.status = newStatus;
+      localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+      renderWorkReportsTable();
+      showToast(`Updated report status to ${newStatus}`);
+    }
+
+    function openReportModal(index) {
+      const report = globalLogs.workReports[index];
+      if (!report) return;
+
+      document.getElementById('modalReportName').innerText = report.name || 'Recruit';
+      document.getElementById('modalReportEmail').innerText = report.email || '';
+      document.getElementById('modalReportDate').innerText = report.date || '';
+      document.getElementById('modalReportTitle').innerText = report.title || 'Daily Protocol Report';
+      document.getElementById('modalReportDetails').innerText = report.details || 'No details provided.';
+
+      const statusBadge = document.getElementById('modalReportStatus');
+      const isVerified = report.status === 'VERIFIED' || !report.status;
+      if (isVerified) {
+        statusBadge.className = 'badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill';
+        statusBadge.innerHTML = '<i class="bi bi-check-all me-1"></i> VERIFIED';
+      } else {
+        statusBadge.className = 'badge bg-warning-subtle text-warning border border-warning-subtle px-3 py-2 rounded-pill';
+        statusBadge.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> PENDING';
+      }
+
+      document.getElementById('modalToggleVerifyBtn').onclick = function() {
+        toggleReportStatus(index);
+        openReportModal(index);
+      };
+
+      const modal = new bootstrap.Modal(document.getElementById('viewReportModal'));
+      modal.show();
+    }
+
+    async function deleteWorkReport(index) {
+      const report = globalLogs.workReports[index];
+      if (!report) return;
+
+      if (confirm('Delete this work protocol log?')) {
+        if (report.id) {
+          try {
+            const res = await fetch(`/api/reports/daily/${report.id}`, {
+              method: 'DELETE'
+            });
+            if (res.ok) {
+              globalLogs.workReports.splice(index, 1);
+              localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+              refreshAdminUI();
+              showToast('🗑️ Deleted work report from Neon DB.');
+              return;
+            }
+          } catch (err) {
+            console.warn('⚠️ Neon DELETE failed:', err);
+          }
+        }
+
+        // Local fallback
+        globalLogs.workReports.splice(index, 1);
+        localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+        refreshAdminUI();
+        showToast('Work report deleted.');
+      }
+    }
+
+    // ── 4️⃣ MASTER WEEKLY REPORTS AUDIT ──
+    function renderWeeklyReportsTable() {
+      const tbody = document.getElementById('weeklyReportsTableBody');
+      if (!tbody) return;
+
+      const searchInput = document.getElementById('weeklyReportSearch');
+      const search = searchInput ? searchInput.value.toLowerCase() : '';
+      const list = globalLogs.weeklyUpdates || [];
+
+      tbody.innerHTML = '';
+      const countEl = document.getElementById('auditWeeklyCount');
+      if (countEl) countEl.innerText = `${list.length} Logged`;
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-4">No weekly reports submitted yet.</td></tr>`;
+        return;
+      }
+
+      list.forEach((report, index) => {
+        if (search && !report.name.toLowerCase().includes(search) && !(report.skills||'').toLowerCase().includes(search) && !(report.updates||'').toLowerCase().includes(search) && !report.email.toLowerCase().includes(search)) {
+          return;
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td class="fw-bold text-muted" style="font-size:12px;">${report.date}</td>
+          <td>
+            <div class="fw-bold text-main">${report.name}</div>
+            <div class="small text-muted" style="font-size:11px;">${report.email}</div>
+          </td>
+          <td style="max-width: 250px; line-height: 1.4;" class="text-truncate">${report.skills || '<em>None logged</em>'}</td>
+          <td style="max-width: 300px; line-height: 1.4;" class="text-truncate">${report.updates || '<em>None logged</em>'}</td>
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-outline-info rounded-circle p-0" style="width:26px; height:26px;" title="View Weekly Report" onclick="openWeeklyReportModal(${index})"><i class="bi bi-arrows-angle-expand"></i></button>
+              <button class="btn btn-sm btn-outline-danger rounded-circle p-0" style="width:26px; height:26px;" title="Delete Weekly Report" onclick="deleteWeeklyReport(${index})"><i class="bi bi-trash"></i></button>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openWeeklyReportModal(index) {
+      const list = globalLogs.weeklyUpdates || [];
+      const report = list[index];
+      if (!report) return;
+
+      document.getElementById('modalWeeklyName').innerText = report.name || 'Recruit';
+      document.getElementById('modalWeeklyEmail').innerText = report.email || '';
+      document.getElementById('modalWeeklyDate').innerText = report.date || '';
+      document.getElementById('modalWeeklySkills').innerText = report.skills || 'None logged.';
+      document.getElementById('modalWeeklyUpdates').innerText = report.updates || 'None logged.';
+
+      const modal = new bootstrap.Modal(document.getElementById('viewWeeklyModal'));
+      modal.show();
+    }
+
+    async function deleteWeeklyReport(index) {
+      const report = globalLogs.weeklyUpdates[index];
+      if (!report) return;
+
+      if (confirm('Delete this weekly report entry?')) {
+        if (report.id) {
+          try {
+            const res = await fetch(`/api/reports/weekly/${report.id}`, {
+              method: 'DELETE'
+            });
+            if (res.ok) {
+              globalLogs.weeklyUpdates.splice(index, 1);
+              localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+              refreshAdminUI();
+              showToast('🗑️ Deleted weekly report from Neon DB.');
+              return;
+            }
+          } catch (err) {
+            console.warn('⚠️ Neon DELETE failed:', err);
+          }
+        }
+
+        // Local fallback
+        globalLogs.weeklyUpdates.splice(index, 1);
+        localStorage.setItem(GLOBAL_LOGS_KEY, JSON.stringify(globalLogs));
+        refreshAdminUI();
+        showToast('Weekly report deleted.');
+      }
+    }
+
+    // ── 5️⃣ ADMIN NOTIFICATION CENTER ──
+    let adminNotifsRead = false;
+
+    function renderAdminNotifications() {
+      const notifList = document.getElementById('adminNotifList');
+      const badge = document.getElementById('adminNotifBadge');
+      const countBadge = document.getElementById('adminNotifCountBadge');
+      if (!notifList) return;
+
+      const notifs = [];
+
+      // Scan Attendance telemetry
+      (globalLogs.attendance || []).forEach(att => {
+        if (att.status === 'CHECKED_IN') {
+          notifs.push({
+            type: 'in',
+            title: `${att.name || 'Recruit'} Checked In`,
+            time: att.checkIn || 'Just now',
+            text: `Started active duty session (${att.email})`,
+            icon: 'bi-box-arrow-in-right text-success',
+            bg: 'rgba(52, 211, 153, 0.12)'
+          });
+        } else if (att.status === 'CHECKED_OUT') {
+          notifs.push({
+            type: 'out',
+            title: `${att.name || 'Recruit'} Checked Out`,
+            time: att.checkOut || 'Today',
+            text: `Completed duty session (${att.hoursLogged || 'Logged'})`,
+            icon: 'bi-box-arrow-right text-danger',
+            bg: 'rgba(248, 113, 113, 0.12)'
+          });
+        }
+      });
+
+      // Scan Work Protocol reports
+      (globalLogs.workReports || []).forEach(rep => {
+        notifs.push({
+          type: 'work',
+          title: `Daily Protocol Committed`,
+          time: rep.date || 'Today',
+          text: `${rep.name || 'Recruit'}: ${rep.details ? rep.details.slice(0, 60) + '...' : 'Daily report submitted'}`,
+          icon: 'bi-journal-check text-warning',
+          bg: 'rgba(251, 191, 36, 0.12)'
+        });
+      });
+
+      // Scan Weekly Updates
+      (globalLogs.weeklyUpdates || []).forEach(w => {
+        notifs.push({
+          type: 'weekly',
+          title: `Weekly Progress Archived`,
+          time: w.date || 'This cycle',
+          text: `${w.name || 'Recruit'} submitted weekly skills & project update`,
+          icon: 'bi-calendar-range text-purple',
+          bg: 'rgba(167, 139, 250, 0.12)'
+        });
+      });
+
+      // Update badge
+      const unreadCount = adminNotifsRead ? 0 : notifs.length;
+      if (badge) {
+        if (unreadCount > 0) {
+          badge.innerText = unreadCount;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      }
+      if (countBadge) countBadge.innerText = `${notifs.length} Total`;
+
+      if (notifs.length === 0) {
+        notifList.innerHTML = `
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-bell-slash fs-4 d-block mb-2 opacity-50"></i>
+            <div class="small fw-bold">No active telemetry alerts</div>
+          </div>
+        `;
+        return;
+      }
+
+      notifList.innerHTML = notifs.map(n => `
+        <div class="p-2 mb-2 rounded-3 d-flex gap-3 align-items-start" style="background: ${n.bg}; border: 1px solid var(--border-color);">
+          <div class="p-2 rounded-circle bg-body d-flex align-items-center justify-content-center" style="width:32px; height:32px; flex-shrink:0;">
+            <i class="bi ${n.icon} fs-6"></i>
+          </div>
+          <div class="flex-grow-1 overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center">
+              <strong style="font-size:12.5px;" class="text-main">${n.title}</strong>
+              <span class="small text-muted font-monospace" style="font-size:10.5px;">${n.time}</span>
+            </div>
+            <div class="small text-muted text-truncate mt-1" style="font-size:11.5px;">${n.text}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleAdminNotifs(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('adminNotifDropdown');
+      if (!dropdown) return;
+
+      const isOpen = dropdown.style.display === 'block';
+      dropdown.style.display = isOpen ? 'none' : 'block';
+
+      if (!isOpen) {
+        adminNotifsRead = true;
+        const badge = document.getElementById('adminNotifBadge');
+        if (badge) badge.style.display = 'none';
+      }
+    }
+
+    function clearAdminNotifs() {
+      adminNotifsRead = true;
+      const notifList = document.getElementById('adminNotifList');
+      const badge = document.getElementById('adminNotifBadge');
+      if (badge) badge.style.display = 'none';
+      if (notifList) {
+        notifList.innerHTML = `
+          <div class="text-center py-4 text-muted">
+            <i class="bi bi-check2-all fs-3 text-success d-block mb-2"></i>
+            <div class="small fw-bold">All notifications cleared</div>
+          </div>
+        `;
+      }
+      showToast('Notifications cleared.');
+    }
+
+    // Dismiss dropdown on outside click
+    document.addEventListener('click', (e) => {
+      const btn = document.getElementById('adminNotifBtn');
+      const dropdown = document.getElementById('adminNotifDropdown');
+      if (dropdown && dropdown.style.display === 'block' && !dropdown.contains(e.target) && (!btn || !btn.contains(e.target))) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+
+
+    // ── CSV EXPORT ──
+    function exportAttendanceCSV() {
+      if (globalLogs.attendance.length === 0) {
+        showToast('No attendance records to export.');
+        return;
+      }
+      let csv = 'Recruit Name,Email,Status,Check In,Check Out,Hours\n';
+      globalLogs.attendance.forEach(a => {
+        csv += `"${a.name}","${a.email}","${a.status}","${a.checkIn}","${a.checkOut}","${a.hours}"\n`;
+      });
+      downloadBlob(csv, 'recruit_attendance_log.csv', 'text/csv');
+    }
+
+    function exportReportsCSV() {
+      if (globalLogs.workReports.length === 0) {
+        showToast('No work reports to export.');
+        return;
+      }
+      let csv = 'Date,Recruit Name,Email,Protocol Title,Details,Status\n';
+      globalLogs.workReports.forEach(r => {
+        csv += `"${r.date}","${r.name}","${r.email}","${r.title || 'Daily Protocol'}","${(r.details || '').replace(/"/g, '""')}","${r.status || 'VERIFIED'}"\n`;
+      });
+      downloadBlob(csv, 'work_reports_audit.csv', 'text/csv');
+    }
+
+    function downloadBlob(content, filename, contentType) {
+      const blob = new Blob([content], { type: contentType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast(`📥 Exported ${filename}`);
+    }
+
+    // ── LIVE POLLING INTERVAL (AUTO REFRESH DATA EVERY 3s) ──
+    setInterval(() => {
+      try {
+        const savedLogs = localStorage.getItem(GLOBAL_LOGS_KEY);
+        if (savedLogs) {
+          const parsed = JSON.parse(savedLogs);
+          if (JSON.stringify(parsed) !== JSON.stringify(globalLogs)) {
+            globalLogs = parsed;
+            renderMetrics();
+            renderAttendanceTable();
+            renderWorkReportsTable();
+          }
+        }
+      } catch(e) {}
+    }, 3000);
+
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      window.location.href = 'login.html';
+    }
+
+    function showToast(text) {
+      const toast = document.getElementById('toastMessage');
+      document.getElementById('toastText').innerText = text;
+      toast.style.display = 'flex';
+      setTimeout(() => { toast.style.display = 'none'; }, 3500);
+    }
+  </script>
+
+  <!-- Register Member Modal -->
+  <div class="modal fade" id="registerModal" tabindex="-1" aria-labelledby="registerModalLabel" aria-hidden="true" style="background: rgba(0,0,0,0.75); z-index: 99999;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-color);">
+          <h5 class="modal-title fw-bold d-flex align-items-center gap-2" id="registerModalLabel">
+            <i class="bi bi-person-plus-fill text-primary"></i> Register New Member
+          </h5>
+          <button type="button" class="btn-close" onclick="closeRegisterModal()" aria-label="Close"></button>
+        </div>
+        <form id="registerMemberForm" onsubmit="handleAdminRegisterMember(event)">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Recruit ID (Editable)</label>
+                <input type="text" id="regId" class="admin-input w-100 font-monospace text-primary fw-bold" placeholder="e.g. REC-101" required />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Full Name</label>
+                <input type="text" id="regName" class="admin-input w-100" placeholder="e.g. David Miller" required />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">PRN Number</label>
+                <input type="text" id="regPrn" class="admin-input w-100 font-monospace" placeholder="e.g. 20240110492" required />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Academic Year</label>
+                <select id="regYear" class="admin-input w-100" required>
+                  <option value="1st Year">1st Year</option>
+                  <option value="2nd Year" selected>2nd Year</option>
+                  <option value="3rd Year">3rd Year</option>
+                  <option value="4th Year">4th Year</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Domain / Specialization</label>
+                <input type="text" id="regDomain" class="admin-input w-100" placeholder="e.g. Full Stack / AI-ML" required />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Mobile Number</label>
+                <input type="tel" id="regMobile" class="admin-input w-100" placeholder="e.g. +91 9876543210" required />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Email Address</label>
+                <input type="email" id="regEmail" class="admin-input w-100" placeholder="e.g. david@sunnexus.com" required />
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-bold text-muted">Role / Designation</label>
+                <input type="text" id="regRole" class="admin-input w-100" placeholder="e.g. Member Engineer" required />
+              </div>
+              <div class="col-12">
+                <label class="form-label small text-uppercase fw-bold text-muted">Initial Password</label>
+                <input type="text" id="regPassword" class="admin-input w-100" placeholder="Password for login" value="recruit123" required />
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer" style="border-top: 1px solid var(--border-color);">
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="closeRegisterModal()">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 fw-bold">Register Member</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Change Admin Credentials Modal -->
+  <div class="modal fade" id="changeAdminCredentialsModal" tabindex="-1" aria-hidden="true" style="background: rgba(0,0,0,0.75); z-index: 99999;">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background: var(--bg-panel); color: var(--text-main); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-lg);">
+        <div class="modal-header" style="border-bottom: 1px solid var(--border-color); padding: 20px 24px;">
+          <div class="d-flex align-items-center gap-3">
+            <div class="p-2 rounded-circle bg-purple-subtle text-purple" style="width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
+              <i class="bi bi-shield-lock-fill"></i>
+            </div>
+            <div>
+              <h5 class="modal-title fw-bold mb-0">Change Admin Credentials</h5>
+              <div class="small text-muted">Update Executive Admin email address & login password</div>
+            </div>
+          </div>
+          <button type="button" class="btn-close" onclick="closeChangeAdminCredentialsModal()" aria-label="Close"></button>
+        </div>
+        <form id="changeAdminForm" onsubmit="handleChangeAdminCredentials(event)">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label small text-uppercase fw-bold text-muted">Admin Email Address</label>
+              <input type="email" id="adminEmailInput" class="admin-input w-100" placeholder="admin@sunnexus.com" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label small text-uppercase fw-bold text-muted">New Password</label>
+              <input type="password" id="adminPasswordInput" class="admin-input w-100" placeholder="Enter new admin password" required />
+            </div>
+          </div>
+          <div class="modal-footer" style="border-top: 1px solid var(--border-color); padding: 16px 24px;">
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3" onclick="closeChangeAdminCredentialsModal()">Cancel</button>
+            <button type="submit" class="btn btn-sm btn-primary rounded-pill px-4 fw-bold">Update Credentials</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
