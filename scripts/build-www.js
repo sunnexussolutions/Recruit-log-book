@@ -44,7 +44,13 @@ async function buildWww() {
       }
     }
 
-    console.log('✅ Web assets successfully bundled in www/ directory!');
+    const androidPublicDir = path.join(rootDir, 'android', 'app', 'src', 'main', 'assets', 'public');
+    if (await fs.pathExists(androidPublicDir)) {
+      await fs.copy(wwwDir, androidPublicDir);
+      console.log('  ✓ Synced assets directly into Android public assets!');
+    }
+
+    console.log('✅ Web assets successfully bundled in www/ and synced to Android!');
   } catch (err) {
     console.error('❌ Build failed:', err);
     process.exit(1);
