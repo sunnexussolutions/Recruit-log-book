@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <script src="assets/js/api-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
   <style>
@@ -886,9 +887,12 @@
     async function loadAdminData() {
       // ── 🐘 Try Neon Database API first ──
       try {
+        const usersUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/users') : 'https://recruit-log-book.vercel.app/api/users';
+        const logsUrl  = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/logs') : 'https://recruit-log-book.vercel.app/api/logs';
+
         const [usersRes, logsRes] = await Promise.all([
-          fetch('/api/users'),
-          fetch('/api/logs')
+          fetch(usersUrl),
+          fetch(logsUrl)
         ]);
 
         if (usersRes.ok && logsRes.ok) {
@@ -1518,7 +1522,8 @@
 
       // Try Neon DB API Register first
       try {
-        const res = await fetch('/api/users/register', {
+        const regUrl = (typeof window.getApiUrl === 'function') ? window.getApiUrl('/api/users/register') : 'https://recruit-log-book.vercel.app/api/users/register';
+        const res = await fetch(regUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -2129,21 +2134,10 @@
       showToast(`📥 Exported ${filename}`);
     }
 
-    // ── LIVE POLLING INTERVAL (AUTO REFRESH DATA EVERY 3s) ──
+    // ── LIVE POLLING INTERVAL (AUTO REFRESH NEON DB DATA EVERY 4s) ──
     setInterval(() => {
-      try {
-        const savedLogs = localStorage.getItem(GLOBAL_LOGS_KEY);
-        if (savedLogs) {
-          const parsed = JSON.parse(savedLogs);
-          if (JSON.stringify(parsed) !== JSON.stringify(globalLogs)) {
-            globalLogs = parsed;
-            renderMetrics();
-            renderAttendanceTable();
-            renderWorkReportsTable();
-          }
-        }
-      } catch(e) {}
-    }, 3000);
+      loadAdminData();
+    }, 4000);
 
     function logout() {
       localStorage.removeItem(SESSION_KEY);
