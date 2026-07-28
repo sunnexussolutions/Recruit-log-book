@@ -31,20 +31,20 @@ async function generateAssets() {
   // Trim surrounding whitespace from source logo to find exact visual bounds
   const trimmedLogo = await sharp(logoSource).trim().toBuffer();
 
-  // 2. ANDROID LAUNCHER & ADAPTIVE ICONS (PERFECTLY CENTERED WITH BALANCED PADDING - NO ZOOM)
+  // 2. ANDROID LAUNCHER & ADAPTIVE ICONS (PERFECTLY CENTERED & SLIGHTLY ZOOMED OUT)
   const iconDensities = [
-    { name: 'mipmap-mdpi', iconSize: 48, fgSize: 108, fgInner: 70 },
-    { name: 'mipmap-hdpi', iconSize: 72, fgSize: 162, fgInner: 105 },
-    { name: 'mipmap-xhdpi', iconSize: 96, fgSize: 216, fgInner: 140 },
-    { name: 'mipmap-xxhdpi', iconSize: 144, fgSize: 324, fgInner: 210 },
-    { name: 'mipmap-xxxhdpi', iconSize: 192, fgSize: 432, fgInner: 280 }
+    { name: 'mipmap-mdpi', iconSize: 48, fgSize: 108, fgInner: 56 },
+    { name: 'mipmap-hdpi', iconSize: 72, fgSize: 162, fgInner: 84 },
+    { name: 'mipmap-xhdpi', iconSize: 96, fgSize: 216, fgInner: 112 },
+    { name: 'mipmap-xxhdpi', iconSize: 144, fgSize: 324, fgInner: 168 },
+    { name: 'mipmap-xxxhdpi', iconSize: 192, fgSize: 432, fgInner: 224 }
   ];
 
   for (const d of iconDensities) {
     const dir = path.join(androidRes, d.name);
     await fs.ensureDir(dir);
 
-    // Standard Launcher Icon (ic_launcher.png) - Centered comfortably on White Canvas (68% scale)
+    // Standard Launcher Icon (ic_launcher.png) - Centered on White Canvas (Slightly Zoomed Out 55% scale)
     const bgCanvas = await sharp({
       create: {
         width: d.iconSize,
@@ -55,7 +55,7 @@ async function generateAssets() {
     }).png().toBuffer();
 
     const logoResized = await sharp(trimmedLogo)
-      .resize(Math.round(d.iconSize * 0.68), Math.round(d.iconSize * 0.68), { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
+      .resize(Math.round(d.iconSize * 0.55), Math.round(d.iconSize * 0.55), { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
       .toBuffer();
 
     await sharp(bgCanvas)
@@ -67,7 +67,7 @@ async function generateAssets() {
       .composite([{ input: logoResized, gravity: 'center' }])
       .toFile(path.join(dir, 'ic_launcher_round.png'));
 
-    // Adaptive Icon Foreground (ic_launcher_foreground.png) - Centered in 108x108 Safe Zone (65% scale)
+    // Adaptive Icon Foreground (ic_launcher_foreground.png) - Centered in 108x108 Safe Zone (Slightly Zoomed Out 52% scale)
     const fgLogo = await sharp(trimmedLogo)
       .resize(d.fgInner, d.fgInner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .toBuffer();
