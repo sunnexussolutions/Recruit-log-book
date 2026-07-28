@@ -7,9 +7,11 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "db:init": "node scripts/init-db.js",
-    "cap:build": "node scripts/build-www.js && npx cap sync",
-    "cap:android": "node scripts/build-www.js && npx cap open android",
-    "cap:ios": "node scripts/build-www.js && npx cap open ios",
+    "generate:assets": "node scripts/generate-assets.js",
+    "build": "node scripts/generate-assets.js && node scripts/build-www.js",
+    "cap:build": "node scripts/generate-assets.js && node scripts/build-www.js && npx cap sync",
+    "cap:android": "node scripts/generate-assets.js && node scripts/build-www.js && npx cap open android",
+    "cap:ios": "node scripts/generate-assets.js && node scripts/build-www.js && npx cap open ios",
     "cap:sync": "npx cap sync"
   },
   "keywords": [
@@ -35,6 +37,7 @@
     "@capacitor/android": "^8.4.2",
     "@capacitor/cli": "^8.4.2",
     "@capacitor/ios": "^8.4.2",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "sharp": "^0.35.3"
   }
 }
