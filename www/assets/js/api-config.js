@@ -41,4 +41,19 @@ i// ============================================================
     }
     window.location.reload();
   };
+
+  // Initialize native Capacitor StatusBar for visible top notification bar
+  document.addEventListener('DOMContentLoaded', function () {
+    if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
+      try {
+        const StatusBar = window.Capacitor.Plugins.StatusBar;
+        StatusBar.show().catch(function () {});
+        StatusBar.setOverlaysWebView({ overlay: false }).catch(function () {});
+        StatusBar.setStyle({ style: 'DARK' }).catch(function () {});
+        StatusBar.setBackgroundColor({ color: '#FFFFFF' }).catch(function () {});
+      } catch (e) {
+        console.warn('StatusBar init warning:', e);
+      }
+    }
+  });
 })();
