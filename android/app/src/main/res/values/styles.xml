@@ -13,8 +13,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:background">#FFFFFF</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#4F46E5</item>
+        <item name="android:windowLightStatusBar">false</item>
         <item name="android:windowTranslucentStatus">false</item>
         <item name="android:fitsSystemWindows">false</item>
     </style>
@@ -24,7 +24,7 @@
         <item name="windowSplashScreenBackground">#FFFFFF</item>
         <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher_foreground</item>
         <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
-        <item name="android:statusBarColor">#FFFFFF</item>
-        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">#4F46E5</item>
+        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>

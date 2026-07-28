@@ -49,8 +49,8 @@ i// ============================================================
         const StatusBar = window.Capacitor.Plugins.StatusBar;
         StatusBar.show().catch(function () {});
         StatusBar.setOverlaysWebView({ overlay: false }).catch(function () {});
-        StatusBar.setStyle({ style: 'DARK' }).catch(function () {});
-        StatusBar.setBackgroundColor({ color: '#FFFFFF' }).catch(function () {});
+        StatusBar.setStyle({ style: 'LIGHT' }).catch(function () {});
+        StatusBar.setBackgroundColor({ color: '#4F46E5' }).catch(function () {});
       } catch (e) {
         console.warn('StatusBar init warning:', e);
       }
