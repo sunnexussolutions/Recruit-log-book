@@ -581,53 +581,109 @@
       margin-top: 4px;
     }
 
-    /* --- CHECKOUT REMINDER BANNER --- */
-    #checkoutReminderBanner {
-      position: sticky;
-      top: 64px;
-      z-index: 1020;
-      background: linear-gradient(90deg, #ea580c 0%, #f97316 50%, #ea580c 100%);
-      background-size: 200% auto;
-      animation: bannerSlide 3s linear infinite;
-      color: #ffffff;
-      padding: 12px 32px;
-      font-size: 14px;
-      font-weight: 600;
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      box-shadow: var(--shadow-md);
-      max-width: 1200px;
-      margin: 0 auto 24px auto;
+    /* --- HEADER ICON BOX & OPERATIONS DASHBOARD TITLE --- */
+    .header-icon-box {
+      width: 44px;
+      height: 44px;
       border-radius: 14px;
+      background: rgba(108, 99, 255, 0.12);
+      border: 1.5px solid #6c63ff;
+      color: #6c63ff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(108, 99, 255, 0.2);
+    }
+
+    /* --- PIXEL-PERFECT MOBILE RESPONSIVE ALERT CARD --- */
+    #checkoutReminderBanner {
+      display: none;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #ffffff;
+      border-radius: 20px;
+      padding: 28px 24px;
+      margin: 0 auto 24px auto;
+      max-width: 1200px;
+      box-shadow: 0 10px 25px -5px rgba(234, 88, 12, 0.4);
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      transition: var(--transition);
+      position: relative;
+      z-index: 2;
     }
 
     #checkoutReminderBanner.visible {
       display: flex;
+      animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
     }
 
-    @keyframes bannerSlide {
-      0% { background-position: 0% center; }
-      100% { background-position: 200% center; }
+    .op-alert-icon {
+      font-size: 38px;
+      line-height: 1;
+      margin-bottom: 14px;
+      filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.15));
     }
 
-    .banner-scroll-btn {
-      background: rgba(255, 255, 255, 0.25);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      color: white;
-      font-size: 13px;
+    .op-alert-message {
+      font-size: 16px;
       font-weight: 700;
-      padding: 6px 16px;
-      border-radius: var(--radius-full);
-      cursor: pointer;
-      white-space: nowrap;
-      transition: var(--transition);
+      color: #ffffff;
+      line-height: 1.55;
+      max-width: 580px;
+      margin-bottom: 20px;
+      letter-spacing: -0.2px;
     }
 
-    .banner-scroll-btn:hover {
-      background: white;
+    .op-alert-btn {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(255, 255, 255, 0.22);
+      border: 1.5px solid rgba(255, 255, 255, 0.75);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 800;
+      padding: 12px 28px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+    }
+
+    .op-alert-btn:hover, .op-alert-btn:active {
+      background: #ffffff;
       color: #ea580c;
+      border-color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+
+    @media (max-width: 576px) {
+      #checkoutReminderBanner {
+        padding: 22px 18px;
+        border-radius: 18px;
+      }
+      .op-alert-icon {
+        font-size: 32px;
+        margin-bottom: 10px;
+      }
+      .op-alert-message {
+        font-size: 14.5px;
+        margin-bottom: 16px;
+      }
+      .op-alert-btn {
+        font-size: 14px;
+        padding: 11px 20px;
+      }
     }
 
     /* --- TELEMETRY CARDS --- */
@@ -757,18 +813,23 @@
   <div class="hero-section">
     <div class="subnav">
       <div class="subnav-content">
-        <h1 class="subnav-title"><i class="bi bi-person-workspace"></i> Operations Dashboard</h1>
+        <h1 class="subnav-title d-flex align-items-center gap-3">
+          <div class="header-icon-box">
+            <i class="bi bi-display-fill"></i>
+          </div>
+          <span>Operations Dashboard</span>
+        </h1>
         <span class="status-tag"><i class="bi bi-shield-check me-1"></i> Active Session</span>
       </div>
     </div>
 
     <!-- ⚠️ Checkout Reminder Banner (Shown when CHECKED_IN + report pending) -->
-    <div id="checkoutReminderBanner" role="alert">
-      <div class="d-flex align-items-center gap-2">
-        <span class="fs-5">⚠️</span>
-        <span>You are checked in but have <strong>not submitted today's work report</strong>. Please submit your protocol report before checking out.</span>
+    <div id="checkoutReminderBanner" class="op-alert-card" role="alert">
+      <div class="op-alert-icon">⚠️</div>
+      <div class="op-alert-message">
+        You are checked in but have not submitted today's work report. You cannot checkout until it's submitted.
       </div>
-      <button class="banner-scroll-btn" onclick="document.getElementById('memberWorkDone').focus(); window.scrollTo({top: 300, behavior: 'smooth'});">
+      <button class="op-alert-btn" onclick="document.getElementById('memberWorkDone').focus(); window.scrollTo({top: 300, behavior: 'smooth'});">
         📝 Submit Report Now
       </button>
     </div>
