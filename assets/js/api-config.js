@@ -43,7 +43,7 @@ i// ============================================================
   };
 
   // Initialize native Capacitor StatusBar for visible top notification bar
-  document.addEventListener('DOMContentLoaded', function () {
+  function setupStatusBar() {
     if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.StatusBar) {
       try {
         const StatusBar = window.Capacitor.Plugins.StatusBar;
@@ -55,5 +55,11 @@ i// ============================================================
         console.warn('StatusBar init warning:', e);
       }
     }
-  });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupStatusBar);
+  } else {
+    setupStatusBar();
+  }
 })();
