@@ -811,30 +811,29 @@
 
   <!-- Hero Header -->
   <div class="hero-section">
-    <div class="subnav">
-      <div class="subnav-content">
-        <h1 class="subnav-title d-flex align-items-center gap-3">
-          <div class="header-icon-box">
-            <i class="bi bi-display-fill"></i>
-          </div>
-          <span>Operations Dashboard</span>
-        </h1>
-        <span class="status-tag"><i class="bi bi-shield-check me-1"></i> Active Session</span>
-      </div>
-    </div>
-
-    <!-- ⚠️ Checkout Reminder Banner (Shown when CHECKED_IN + report pending) -->
-    <div id="checkoutReminderBanner" class="op-alert-card" role="alert">
-      <div class="op-alert-icon">⚠️</div>
-      <div class="op-alert-message">
-        You are checked in but have not submitted today's work report. You cannot checkout until it's submitted.
-      </div>
-      <button class="op-alert-btn" onclick="document.getElementById('memberWorkDone').focus(); window.scrollTo({top: 300, behavior: 'smooth'});">
-        📝 Submit Report Now
-      </button>
-    </div>
-
     <div class="container-app">
+      <!-- Operations Dashboard Header -->
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h1 class="subnav-title d-flex align-items-center gap-3 mb-0">
+          <div class="header-icon-box">
+            <i class="bi bi-person-badge-fill"></i>
+          </div>
+          <span style="font-size: 26px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px;">Operations Dashboard</span>
+        </h1>
+        <span class="status-tag d-none d-sm-inline-flex"><i class="bi bi-shield-check me-1"></i> Active Session</span>
+      </div>
+
+      <!-- ⚠️ Orange Alert Card (Shown when CHECKED_IN + report pending) -->
+      <div id="checkoutReminderBanner" class="op-alert-card" role="alert">
+        <div class="op-alert-icon">⚠️</div>
+        <div class="op-alert-message">
+          You are checked in but have not submitted today's work report. You cannot checkout until it's submitted.
+        </div>
+        <button class="op-alert-btn" onclick="document.getElementById('memberWorkDone').focus(); window.scrollTo({top: 400, behavior: 'smooth'});">
+          📝 Submit Report Now
+        </button>
+      </div>
+
       <!-- 1️⃣ & 2️⃣ TOP CARDS 2-COLUMN GRID (Exposes center watermark logo matching Admin Panel) -->
       <div class="row g-4 mb-4">
         <!-- Daily Attendance Card -->
