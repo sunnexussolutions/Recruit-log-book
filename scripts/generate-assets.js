@@ -28,21 +28,24 @@ async function generateAssets() {
   await sharp(logoSource).resize(32, 32).png().toFile(path.join(rootDir, 'assets', 'favicon.png'));
   await sharp(logoSource).resize(512, 512).png().toFile(path.join(rootDir, 'assets', 'logo-icon.png'));
 
-  // 2. ANDROID LAUNCHER & ADAPTIVE ICONS (MAXIMUM ZOOM FILL)
+  // Trim surrounding whitespace from source logo to find exact visual bounds
+  const trimmedLogo = await sharp(logoSource).trim().toBuffer();
+
+  // 2. ANDROID LAUNCHER & ADAPTIVE ICONS (PERFECTLY CENTERED & SCALED)
   const iconDensities = [
-    { name: 'mipmap-mdpi', iconSize: 48, fgSize: 108, fgInner: 108 },
-    { name: 'mipmap-hdpi', iconSize: 72, fgSize: 162, fgInner: 162 },
-    { name: 'mipmap-xhdpi', iconSize: 96, fgSize: 216, fgInner: 216 },
-    { name: 'mipmap-xxhdpi', iconSize: 144, fgSize: 324, fgInner: 324 },
-    { name: 'mipmap-xxxhdpi', iconSize: 192, fgSize: 432, fgInner: 432 }
+    { name: 'mipmap-mdpi', iconSize: 48, fgSize: 108, fgInner: 90 },
+    { name: 'mipmap-hdpi', iconSize: 72, fgSize: 162, fgInner: 135 },
+    { name: 'mipmap-xhdpi', iconSize: 96, fgSize: 216, fgInner: 180 },
+    { name: 'mipmap-xxhdpi', iconSize: 144, fgSize: 324, fgInner: 270 },
+    { name: 'mipmap-xxxhdpi', iconSize: 192, fgSize: 432, fgInner: 360 }
   ];
 
   for (const d of iconDensities) {
     const dir = path.join(androidRes, d.name);
     await fs.ensureDir(dir);
 
-    // Standard Launcher Icon (ic_launcher.png) - Maximum Zoom Fill
-    const bgComposite = await sharp({
+    // Standard Launcher Icon (ic_launcher.png) - Perfectly Centered on White Canvas
+    const bgCanvas = await sharp({
       create: {
         width: d.iconSize,
         height: d.iconSize,
@@ -51,22 +54,22 @@ async function generateAssets() {
       }
     }).png().toBuffer();
 
-    const logoResized = await sharp(logoSource)
-      .resize(d.iconSize, d.iconSize, { fit: 'cover' })
+    const logoResized = await sharp(trimmedLogo)
+      .resize(Math.round(d.iconSize * 0.92), Math.round(d.iconSize * 0.92), { fit: 'contain', background: { r: 255, g: 255, b: 255, alpha: 0 } })
       .toBuffer();
 
-    await sharp(bgComposite)
+    await sharp(bgCanvas)
       .composite([{ input: logoResized, gravity: 'center' }])
       .toFile(path.join(dir, 'ic_launcher.png'));
 
     // Round Launcher Icon (ic_launcher_round.png)
-    await sharp(bgComposite)
+    await sharp(bgCanvas)
       .composite([{ input: logoResized, gravity: 'center' }])
       .toFile(path.join(dir, 'ic_launcher_round.png'));
 
-    // Adaptive Icon Foreground (ic_launcher_foreground.png) - 100% Full Canvas Zoom
-    const fgLogo = await sharp(logoSource)
-      .resize(d.fgInner, d.fgInner, { fit: 'cover' })
+    // Adaptive Icon Foreground (ic_launcher_foreground.png) - Perfectly Centered
+    const fgLogo = await sharp(trimmedLogo)
+      .resize(d.fgInner, d.fgInner, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
       .toBuffer();
 
     await sharp({
